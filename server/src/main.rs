@@ -1,4 +1,5 @@
 mod auth;
+mod circles;
 mod config;
 mod db;
 mod error;
@@ -30,6 +31,7 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(config.clone()))
             .configure(auth::configure_routes)
             .configure(user::configure_routes)
+            .configure(circles::configure_routes)
     })
     .bind(&bind_addr)?
     .run()
