@@ -1,8 +1,11 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import Layout from './components/Layout';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Feed from './pages/Feed';
+import StoryView from './pages/StoryView';
 
 function App() {
   return (
@@ -12,15 +15,15 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route
-            path="/"
             element={
               <ProtectedRoute>
-                <div className="min-h-screen flex items-center justify-center bg-bg-base">
-                  <p className="text-text-secondary">Feed coming in Phase 3</p>
-                </div>
+                <Layout />
               </ProtectedRoute>
             }
-          />
+          >
+            <Route path="/" element={<Feed />} />
+            <Route path="/stories/:id" element={<StoryView />} />
+          </Route>
         </Routes>
       </AuthProvider>
     </BrowserRouter>
