@@ -16,6 +16,11 @@ export async function getFeed() {
   return res.data;
 }
 
+export async function getMyStories() {
+  const res = await client.get<StoryResponse[]>('/stories/mine');
+  return res.data;
+}
+
 export async function getStory(id: string) {
   const res = await client.get<StoryDetailResponse>(`/stories/${id}`);
   return res.data;

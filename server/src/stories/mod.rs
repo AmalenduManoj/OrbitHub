@@ -9,6 +9,7 @@ pub fn configure_routes(cfg: &mut web::ServiceConfig) {
         web::scope("/stories")
             .route("", web::post().to(handler::create_story))
             .route("/feed", web::get().to(handler::feed))
+            .route("/mine", web::get().to(handler::my_stories))
             .route("/{id}", web::get().to(handler::get_story))
             .route("/{id}", web::delete().to(handler::delete_story))
             .route("/{id}/view", web::post().to(handler::view_story))

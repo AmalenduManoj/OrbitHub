@@ -10,6 +10,8 @@ import Circles from './pages/Circles';
 import CircleDetail from './pages/CircleDetail';
 import Profile from './pages/Profile';
 import Settings from './pages/Settings';
+import Highlights from './pages/Highlights';
+import HighlightDetail from './pages/HighlightDetail';
 
 function App() {
   return (
@@ -31,6 +33,8 @@ function App() {
             <Route path="/circles/:id" element={<CircleDetail />} />
             <Route path="/profile/:id" element={<Profile />} />
             <Route path="/settings" element={<Settings />} />
+            <Route path="/highlights" element={<Highlights />} />
+            <Route path="/highlights/:id" element={<HighlightDetail />} />
           </Route>
         </Routes>
       </AuthProvider>

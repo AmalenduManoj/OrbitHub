@@ -18,6 +18,14 @@ pub async fn create_story(
     Ok(HttpResponse::Created().json(story))
 }
 
+pub async fn my_stories(
+    pool: web::Data<PgPool>,
+    auth_user: AuthenticatedUser,
+) -> Result<HttpResponse, AppError> {
+    let stories = service::my_stories(pool.get_ref(), auth_user.user_id).await?;
+    Ok(HttpResponse::Ok().json(stories))
+}
+
 pub async fn feed(
     pool: web::Data<PgPool>,
     auth_user: AuthenticatedUser,

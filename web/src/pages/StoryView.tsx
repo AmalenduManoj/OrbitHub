@@ -1,19 +1,32 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getStory, viewStory, toggleLike, getComments, addComment, deleteComment } from '../api/stories';
-import type { StoryDetailResponse, CommentResponse } from '../types';
+import { listHighlights, addStoryToHighlight } from '../api/highlights';
+import { useAuth } from '../context/AuthContext';
+import type { StoryDetailResponse, CommentResponse, HighlightResponse } from '../types';
 import LikeButton from '../components/LikeButton';
 import CommentList from '../components/CommentList';
+import CreateHighlightModal from '../components/CreateHighlightModal';
 
 export default function StoryView() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { user } = useAuth();
 
   const [story, setStory] = useState<StoryDetailResponse | null>(null);
   const [comments, setComments] = useState<CommentResponse[]>([]);
   const [liked, setLiked] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+
+  // Save to highlight state
+  const [showHlPicker, setShowHlPicker] = useState(false);
+  const [highlights, setHighlights] = useState<HighlightResponse[]>([]);
+  const [hlLoading, setHlLoading] = useState(false);
+  const [showCreateHl, setShowCreateHl] = useState(false);
+  const [hlMsg, setHlMsg] = useState('');
+
+  const isOwner = user && story && user.id === story.user_id;
 
   const fetchStory = useCallback(async () => {
     if (!id) return;
@@ -26,7 +39,6 @@ export default function StoryView() {
       ]);
       setStory(storyData);
       setComments(commentsData);
-      // Register view
       viewStory(id).catch(() => {});
     } catch {
       setError('Failed to load story');
@@ -67,6 +79,32 @@ export default function StoryView() {
       await deleteComment(id, commentId);
       setComments((prev) => prev.filter((c) => c.id !== commentId));
     } catch {}
+  };
+
+  // Save to highlight
+  const openHlPicker = async () => {
+    setShowHlPicker(true);
+    setHlMsg('');
+    setHlLoading(true);
+    try {
+      const data = await listHighlights();
+      setHighlights(data);
+    } catch {
+      setHlMsg('Failed to load highlights');
+    } finally {
+      setHlLoading(false);
+    }
+  };
+
+  const handleSaveToHl = async (hlId: string) => {
+    if (!id) return;
+    try {
+      await addStoryToHighlight(hlId, id);
+      setHlMsg('Saved to highlight!');
+      setTimeout(() => setShowHlPicker(false), 1000);
+    } catch {
+      setHlMsg('Failed to save');
+    }
   };
 
   if (loading) {
@@ -120,6 +158,20 @@ export default function StoryView() {
             </svg>
             {story.view_count}
           </div>
+
+          {/* Save to highlight (owner only) */}
+          {isOwner && (
+            <button
+              onClick={openHlPicker}
+              className="flex items-center gap-1 text-sm text-text-secondary hover:text-primary transition"
+              title="Save to highlight"
+            >
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+              </svg>
+            </button>
+          )}
+
           <LikeButton liked={liked} count={story.like_count} onToggle={handleLike} />
         </div>
 
@@ -141,7 +193,7 @@ export default function StoryView() {
         </div>
       </div>
 
-      {/* Comments panel (desktop sidebar, mobile bottom sheet) */}
+      {/* Comments panel */}
       <div className="w-full md:w-80 bg-bg-card border-l border-gray-800 flex flex-col">
         <div className="px-4 py-3 border-b border-gray-800">
           <h3 className="text-sm font-semibold text-text-primary">
@@ -154,6 +206,73 @@ export default function StoryView() {
           onDelete={handleDeleteComment}
         />
       </div>
+
+      {/* Highlight picker overlay */}
+      {showHlPicker && (
+        <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/70">
+          <div className="bg-bg-card w-full sm:max-w-sm sm:rounded-2xl rounded-t-2xl p-4">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="font-semibold text-white">Save to Highlight</h3>
+              <button
+                onClick={() => setShowHlPicker(false)}
+                className="text-text-secondary hover:text-text-primary text-sm transition"
+              >
+                Cancel
+              </button>
+            </div>
+
+            {hlMsg && (
+              <p className="text-sm text-center mb-3 text-primary">{hlMsg}</p>
+            )}
+
+            {hlLoading ? (
+              <div className="flex justify-center py-6">
+                <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full" />
+              </div>
+            ) : highlights.length === 0 ? (
+              <p className="text-text-muted text-sm text-center py-4">No highlights yet</p>
+            ) : (
+              <div className="space-y-1 max-h-60 overflow-y-auto">
+                {highlights.map((hl) => (
+                  <button
+                    key={hl.id}
+                    onClick={() => handleSaveToHl(hl.id)}
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-bg-hover transition text-left"
+                  >
+                    <div className="w-9 h-9 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-sm font-medium text-white">{hl.name}</p>
+                      <p className="text-xs text-text-muted">{hl.story_count} stories</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            )}
+
+            <button
+              onClick={() => { setShowHlPicker(false); setShowCreateHl(true); }}
+              className="w-full mt-3 py-2.5 rounded-lg border border-dashed border-gray-700 text-text-secondary hover:border-primary hover:text-primary text-sm font-medium transition"
+            >
+              + New Highlight
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Create highlight modal */}
+      <CreateHighlightModal
+        open={showCreateHl}
+        onClose={() => setShowCreateHl(false)}
+        onCreated={() => {
+          setShowCreateHl(false);
+          openHlPicker();
+        }}
+        preSelectedStoryId={id}
+      />
     </div>
   );
 }

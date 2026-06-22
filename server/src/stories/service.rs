@@ -5,6 +5,33 @@ use uuid::Uuid;
 use crate::error::AppError;
 use crate::stories::models::*;
 
+pub async fn my_stories(pool: &PgPool, user_id: Uuid) -> Result<Vec<StoryResponse>, AppError> {
+    let stories = sqlx::query_as::<_, StoryResponse>(
+        "SELECT s.id, s.user_id, u.username, p.avatar_url,
+                s.media_url, s.media_type, s.caption, s.expires_at, s.is_highlight,
+                s.created_at,
+                COALESCE(v.cnt, 0::bigint) AS view_count,
+                COALESCE(l.cnt, 0::bigint) AS like_count,
+                COALESCE(c.cnt, 0::bigint) AS comment_count,
+                false AS viewed,
+                false AS liked
+         FROM stories s
+         JOIN users u ON u.id = s.user_id
+         LEFT JOIN profiles p ON p.user_id = s.user_id
+         LEFT JOIN (SELECT story_id, COUNT(*) AS cnt FROM story_views GROUP BY story_id) v ON v.story_id = s.id
+         LEFT JOIN (SELECT story_id, COUNT(*) AS cnt FROM story_likes GROUP BY story_id) l ON l.story_id = s.id
+         LEFT JOIN (SELECT story_id, COUNT(*) AS cnt FROM story_comments GROUP BY story_id) c ON c.story_id = s.id
+         WHERE s.user_id = $1
+           AND (s.expires_at > NOW() OR s.is_highlight = true)
+         ORDER BY s.created_at DESC",
+    )
+    .bind(user_id)
+    .fetch_all(pool)
+    .await?;
+
+    Ok(stories)
+}
+
 pub async fn create_story(
     pool: &PgPool,
     user_id: Uuid,
