@@ -54,7 +54,11 @@ pub async fn update_profile(
 pub async fn search_users(pool: &PgPool, query: &str) -> Result<Vec<UserSearchResult>, AppError> {
     let pattern = format!("%{}%", query);
     let users = sqlx::query_as::<_, UserSearchResult>(
-        "SELECT id, username, avatar_url FROM users WHERE username ILIKE $1 LIMIT 20",
+        "SELECT u.id, u.username, p.avatar_url
+         FROM users u
+         LEFT JOIN profiles p ON p.user_id = u.id
+         WHERE u.username ILIKE $1
+         LIMIT 20",
     )
     .bind(&pattern)
     .fetch_all(pool)

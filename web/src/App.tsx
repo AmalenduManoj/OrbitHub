@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
+import { NotificationProvider } from './context/NotificationContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 import Login from './pages/Login';
@@ -12,6 +13,8 @@ import Profile from './pages/Profile';
 import Settings from './pages/Settings';
 import Highlights from './pages/Highlights';
 import HighlightDetail from './pages/HighlightDetail';
+import Notifications from './pages/Notifications';
+import Search from './pages/Search';
 
 function App() {
   return (
@@ -23,7 +26,9 @@ function App() {
           <Route
             element={
               <ProtectedRoute>
-                <Layout />
+                <NotificationProvider>
+                  <Layout />
+                </NotificationProvider>
               </ProtectedRoute>
             }
           >
@@ -35,6 +40,8 @@ function App() {
             <Route path="/settings" element={<Settings />} />
             <Route path="/highlights" element={<Highlights />} />
             <Route path="/highlights/:id" element={<HighlightDetail />} />
+            <Route path="/notifications" element={<Notifications />} />
+            <Route path="/search" element={<Search />} />
           </Route>
         </Routes>
       </AuthProvider>
