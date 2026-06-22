@@ -160,6 +160,103 @@ curl -X DELETE http://localhost:8081/circles/<circle_id>/members/<user_id> \
   -H "Authorization: Bearer <access_token>"
 ```
 
+### Stories
+
+All stories endpoints require authentication. Comments are private — owner sees all, others see only their own.
+
+| Method | Path | Auth | Owner Only | Description |
+|---|---|---|---|---|
+| POST | `/stories` | ✅ | — | Create story `{ media_url, media_type, caption?, expires_at, circle_ids[] }` |
+| GET | `/stories/feed` | ✅ | — | View active stories from circles you're in |
+| GET | `/stories/{id}` | ✅ | — | View a single story |
+| DELETE | `/stories/{id}` | ✅ | ✅ | Delete own story |
+| POST | `/stories/{id}/view` | ✅ | — | Register a view (idempotent) |
+| GET | `/stories/{id}/views` | ✅ | ✅ | Who viewed |
+| POST | `/stories/{id}/like` | ✅ | — | Toggle like |
+| GET | `/stories/{id}/likes` | ✅ | ✅ | Who liked |
+| POST | `/stories/{id}/comments` | ✅ | — | Add comment |
+| GET | `/stories/{id}/comments` | ✅ | — | Owner sees all; others see own |
+| DELETE | `/stories/{id}/comments/{comment_id}` | ✅ | ✅ | Owner or comment author |
+
+**Create story:**
+```bash
+curl -X POST http://localhost:8081/stories \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <access_token>" \
+  -d '{"media_url":"https://example.com/photo.jpg","media_type":"image","caption":"My day","expires_at":"2026-06-25T00:00:00Z","circle_ids":["<circle_id>"]}'
+```
+
+**View feed:**
+```bash
+curl http://localhost:8081/stories/feed \
+  -H "Authorization: Bearer <access_token>"
+```
+
+**View story:**
+```bash
+curl http://localhost:8081/stories/<story_id> \
+  -H "Authorization: Bearer <access_token>"
+```
+
+**Register view:**
+```bash
+curl -X POST http://localhost:8081/stories/<story_id>/view \
+  -H "Authorization: Bearer <access_token>"
+```
+
+**Toggle like:**
+```bash
+curl -X POST http://localhost:8081/stories/<story_id>/like \
+  -H "Authorization: Bearer <access_token>"
+```
+
+**Add comment:**
+```bash
+curl -X POST http://localhost:8081/stories/<story_id>/comments \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <access_token>" \
+  -d '{"content":"Nice photo!"}'
+```
+
+**Get comments:**
+```bash
+curl http://localhost:8081/stories/<story_id>/comments \
+  -H "Authorization: Bearer <access_token>"
+```
+
+### Highlights
+
+| Method | Path | Auth | Owner Only | Description |
+|---|---|---|---|---|
+| POST | `/highlights` | ✅ | — | Create collection `{ name, cover_story_id? }` |
+| GET | `/highlights` | ✅ | — | List your highlights |
+| GET | `/highlights/{id}` | ✅ | — | Get highlight with stories |
+| DELETE | `/highlights/{id}` | ✅ | ✅ | Delete highlight |
+| POST | `/highlights/{id}/stories` | ✅ | ✅ | Add story to highlight |
+| DELETE | `/highlights/{id}/stories/{story_id}` | ✅ | ✅ | Remove from highlight |
+
+**Create highlight:**
+```bash
+curl -X POST http://localhost:8081/highlights \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <access_token>" \
+  -d '{"name":"Best of 2026","cover_story_id":"<story_id>"}'
+```
+
+**Add story to highlight:**
+```bash
+curl -X POST http://localhost:8081/highlights/<highlight_id>/stories \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <access_token>" \
+  -d '{"story_id":"<story_id>"}'
+```
+
+**Get highlight with stories:**
+```bash
+curl http://localhost:8081/highlights/<highlight_id> \
+  -H "Authorization: Bearer <access_token>"
+```
+
 ## Project Structure
 
 ```
@@ -178,10 +275,14 @@ src/
 │   ├── handler.rs    # User endpoint handlers
 │   ├── service.rs    # Profile CRUD, follow/unfollow
 │   └── models.rs     # UserResponse, ProfileUpdateRequest
-└── circles/
-    ├── handler.rs    # Circle endpoint handlers
-    ├── service.rs    # Circle CRUD, member management
-    └── models.rs     # Circle request/response types
+├── circles/
+│   ├── handler.rs    # Circle endpoint handlers
+│   ├── service.rs    # Circle CRUD, member management
+│   └── models.rs     # Circle request/response types
+└── stories/
+    ├── handler.rs    # Story & highlight endpoint handlers
+    ├── service.rs    # Story CRUD, visibility, likes, comments, highlights
+    └── models.rs     # Story, comment, highlight request/response types
 ```
 
 ## Design Decisions
@@ -192,3 +293,6 @@ src/
 - **Login via email or username** — single `credential` field, query matches `email OR username`
 - **Session pooler (port 5432)** — avoids PgBouncer prepared statement conflicts from transaction pooler
 - **Follow-gated circles** — can only add users who follow you, preventing spam
+- **Private comments** — story owner sees all comments, viewers only see their own
+- **Highlights override expiry** — stories added to highlights persist regardless of `expires_at`
+- **Custom expiry** — stories accept a custom `expires_at` timestamp (not just presets)

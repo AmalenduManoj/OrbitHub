@@ -3,6 +3,7 @@ mod circles;
 mod config;
 mod db;
 mod error;
+mod stories;
 mod user;
 
 use actix_web::{web, App, HttpServer, middleware::Logger};
@@ -32,6 +33,7 @@ async fn main() -> std::io::Result<()> {
             .configure(auth::configure_routes)
             .configure(user::configure_routes)
             .configure(circles::configure_routes)
+            .configure(stories::configure_routes)
     })
     .bind(&bind_addr)?
     .run()
