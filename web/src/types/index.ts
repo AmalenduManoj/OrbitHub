@@ -209,6 +209,13 @@ export interface UnreadCountResponse {
   count: number;
 }
 
+// ── User Search ──
+export interface UserSearchResult {
+  id: string;
+  username: string;
+  avatar_url: string | null;
+}
+
 // ── Generic ──
 export interface MessageResponse {
   message: string;

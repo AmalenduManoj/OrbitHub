@@ -2,7 +2,7 @@ use sqlx::PgPool;
 use uuid::Uuid;
 
 use crate::error::AppError;
-use crate::user::models::{ProfileUpdateRequest, UserResponse};
+use crate::user::models::{ProfileUpdateRequest, UserResponse, UserSearchResult};
 
 pub async fn get_user_profile(pool: &PgPool, user_id: Uuid) -> Result<UserResponse, AppError> {
     let user = sqlx::query_as::<_, UserResponse>(
@@ -49,6 +49,18 @@ pub async fn update_profile(
     .await?;
 
     get_user_profile(pool, user_id).await
+}
+
+pub async fn search_users(pool: &PgPool, query: &str) -> Result<Vec<UserSearchResult>, AppError> {
+    let pattern = format!("%{}%", query);
+    let users = sqlx::query_as::<_, UserSearchResult>(
+        "SELECT id, username, avatar_url FROM users WHERE username ILIKE $1 LIMIT 20",
+    )
+    .bind(&pattern)
+    .fetch_all(pool)
+    .await?;
+
+    Ok(users)
 }
 
 pub async fn follow_user(

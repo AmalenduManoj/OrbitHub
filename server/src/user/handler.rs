@@ -6,8 +6,20 @@ use crate::auth::middleware::AuthenticatedUser;
 use crate::error::AppError;
 use crate::notifications::service as notification_service;
 use crate::notifications::ws::WsClients;
-use crate::user::models::ProfileUpdateRequest;
+use crate::user::models::{ProfileUpdateRequest, SearchQuery};
 use crate::user::service;
+
+pub async fn search(
+    pool: web::Data<PgPool>,
+    query: web::Query<SearchQuery>,
+) -> Result<HttpResponse, AppError> {
+    let q = query.into_inner().q;
+    if q.trim().is_empty() {
+        return Ok(HttpResponse::Ok().json(Vec::<serde_json::Value>::new()));
+    }
+    let users = service::search_users(pool.get_ref(), &q).await?;
+    Ok(HttpResponse::Ok().json(users))
+}
 
 pub async fn get_user(
     pool: web::Data<PgPool>,

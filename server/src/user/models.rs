@@ -21,3 +21,15 @@ pub struct ProfileUpdateRequest {
     pub avatar_url: Option<String>,
     pub gender: Option<String>,
 }
+
+#[derive(Debug, Serialize, FromRow)]
+pub struct UserSearchResult {
+    pub id: Uuid,
+    pub username: String,
+    pub avatar_url: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct SearchQuery {
+    pub q: String,
+}

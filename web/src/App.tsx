@@ -6,6 +6,10 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import Feed from './pages/Feed';
 import StoryView from './pages/StoryView';
+import Circles from './pages/Circles';
+import CircleDetail from './pages/CircleDetail';
+import Profile from './pages/Profile';
+import Settings from './pages/Settings';
 
 function App() {
   return (
@@ -23,6 +27,10 @@ function App() {
           >
             <Route path="/" element={<Feed />} />
             <Route path="/stories/:id" element={<StoryView />} />
+            <Route path="/circles" element={<Circles />} />
+            <Route path="/circles/:id" element={<CircleDetail />} />
+            <Route path="/profile/:id" element={<Profile />} />
+            <Route path="/settings" element={<Settings />} />
           </Route>
         </Routes>
       </AuthProvider>

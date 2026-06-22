@@ -17,44 +17,44 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<AuthUserResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // On mount, try to restore session from stored tokens
+  // On mount, restore user + tokens from localStorage
   useEffect(() => {
     const token = getAccessToken();
-    if (!token) {
-      setLoading(false);
-      return;
-    }
-    // Decode JWT payload to check expiry
-    try {
-      const payload = JSON.parse(atob(token.split('.')[1]));
-      if (payload.exp * 1000 < Date.now()) {
+    const saved = localStorage.getItem('user');
+    if (token && saved) {
+      try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        if (payload.exp * 1000 > Date.now()) {
+          setUser(JSON.parse(saved));
+        } else {
+          clearTokens();
+          localStorage.removeItem('user');
+        }
+      } catch {
         clearTokens();
-        setLoading(false);
-        return;
+        localStorage.removeItem('user');
       }
-      // Valid token — try fetching current user info
-      // We'll decode user info from a lightweight endpoint later; for now just mark ready
-      setLoading(false);
-    } catch {
-      clearTokens();
-      setLoading(false);
     }
+    setLoading(false);
   }, []);
 
   const login = useCallback(async (data: LoginRequest) => {
     const res = await authApi.login(data);
     setTokens(res.access_token, res.refresh_token);
+    localStorage.setItem('user', JSON.stringify(res.user));
     setUser(res.user);
   }, []);
 
   const register = useCallback(async (data: RegisterRequest) => {
     const res = await authApi.register(data);
     setTokens(res.access_token, res.refresh_token);
+    localStorage.setItem('user', JSON.stringify(res.user));
     setUser(res.user);
   }, []);
 
   const logout = useCallback(() => {
     clearTokens();
+    localStorage.removeItem('user');
     setUser(null);
   }, []);
 
