@@ -8,6 +8,7 @@ mod stories;
 mod user;
 
 use actix_web::{web, App, HttpServer, middleware::Logger};
+use actix_cors::Cors;
 use notifications::ws::WsClients;
 
 #[actix_web::main]
@@ -29,7 +30,10 @@ async fn main() -> std::io::Result<()> {
     println!("Orbit server starting on {}", bind_addr);
 
     HttpServer::new(move || {
+        let cors = Cors::permissive();
+
         App::new()
+            .wrap(cors)
             .wrap(Logger::default())
             .app_data(web::Data::new(pool.clone()))
             .app_data(web::Data::new(redis_client.clone()))
