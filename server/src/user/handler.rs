@@ -4,6 +4,8 @@ use uuid::Uuid;
 
 use crate::auth::middleware::AuthenticatedUser;
 use crate::error::AppError;
+use crate::notifications::service as notification_service;
+use crate::notifications::ws::WsClients;
 use crate::user::models::ProfileUpdateRequest;
 use crate::user::service;
 
@@ -27,11 +29,29 @@ pub async fn update_profile(
 
 pub async fn follow(
     pool: web::Data<PgPool>,
+    ws_clients: web::Data<WsClients>,
     auth_user: AuthenticatedUser,
     path: web::Path<Uuid>,
 ) -> Result<HttpResponse, AppError> {
     let followed_id = path.into_inner();
     service::follow_user(pool.get_ref(), auth_user.user_id, followed_id).await?;
+
+    let actor_username: String = sqlx::query_scalar("SELECT username FROM users WHERE id = $1")
+        .bind(auth_user.user_id)
+        .fetch_one(pool.get_ref())
+        .await?;
+
+    notification_service::send_and_broadcast(
+        pool.get_ref(),
+        ws_clients.get_ref(),
+        followed_id,
+        Some(auth_user.user_id),
+        "follow",
+        None,
+        &format!("{} started following you", actor_username),
+    )
+    .await;
+
     Ok(HttpResponse::Ok().json(serde_json::json!({"message": "Followed successfully"})))
 }
 

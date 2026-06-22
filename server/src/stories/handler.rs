@@ -4,6 +4,8 @@ use uuid::Uuid;
 
 use crate::auth::middleware::AuthenticatedUser;
 use crate::error::AppError;
+use crate::notifications::service as notification_service;
+use crate::notifications::ws::WsClients;
 use crate::stories::models::*;
 use crate::stories::service;
 
@@ -62,10 +64,40 @@ pub async fn get_views(
 
 pub async fn toggle_like(
     pool: web::Data<PgPool>,
+    ws_clients: web::Data<WsClients>,
     auth_user: AuthenticatedUser,
     path: web::Path<Uuid>,
 ) -> Result<HttpResponse, AppError> {
-    let liked = service::toggle_like(pool.get_ref(), path.into_inner(), auth_user.user_id).await?;
+    let story_id = path.into_inner();
+    let liked = service::toggle_like(pool.get_ref(), story_id, auth_user.user_id).await?;
+
+    if liked {
+        let story_owner: Uuid = sqlx::query_scalar("SELECT user_id FROM stories WHERE id = $1")
+            .bind(story_id)
+            .fetch_optional(pool.get_ref())
+            .await?
+            .unwrap_or_default();
+
+        if story_owner != auth_user.user_id {
+            let actor_username: String =
+                sqlx::query_scalar("SELECT username FROM users WHERE id = $1")
+                    .bind(auth_user.user_id)
+                    .fetch_one(pool.get_ref())
+                    .await?;
+
+            notification_service::send_and_broadcast(
+                pool.get_ref(),
+                ws_clients.get_ref(),
+                story_owner,
+                Some(auth_user.user_id),
+                "like",
+                Some(story_id),
+                &format!("{} liked your story", actor_username),
+            )
+            .await;
+        }
+    }
+
     Ok(HttpResponse::Ok().json(serde_json::json!({"liked": liked})))
 }
 
@@ -80,12 +112,40 @@ pub async fn get_likes(
 
 pub async fn add_comment(
     pool: web::Data<PgPool>,
+    ws_clients: web::Data<WsClients>,
     auth_user: AuthenticatedUser,
     path: web::Path<Uuid>,
     body: web::Json<AddCommentRequest>,
 ) -> Result<HttpResponse, AppError> {
+    let story_id = path.into_inner();
     let comment =
-        service::add_comment(pool.get_ref(), path.into_inner(), auth_user.user_id, &body.content).await?;
+        service::add_comment(pool.get_ref(), story_id, auth_user.user_id, &body.content).await?;
+
+    let story_owner: Uuid = sqlx::query_scalar("SELECT user_id FROM stories WHERE id = $1")
+        .bind(story_id)
+        .fetch_optional(pool.get_ref())
+        .await?
+        .unwrap_or_default();
+
+    if story_owner != auth_user.user_id {
+        let actor_username: String =
+            sqlx::query_scalar("SELECT username FROM users WHERE id = $1")
+                .bind(auth_user.user_id)
+                .fetch_one(pool.get_ref())
+                .await?;
+
+        notification_service::send_and_broadcast(
+            pool.get_ref(),
+            ws_clients.get_ref(),
+            story_owner,
+            Some(auth_user.user_id),
+            "comment",
+            Some(story_id),
+            &format!("{} commented on your story", actor_username),
+        )
+        .await;
+    }
+
     Ok(HttpResponse::Created().json(comment))
 }
 

@@ -257,6 +257,42 @@ curl http://localhost:8081/highlights/<highlight_id> \
   -H "Authorization: Bearer <access_token>"
 ```
 
+### Notifications
+
+Notifications fire automatically on follow, like, and comment. Real-time delivery via WebSocket at `GET /ws/notifications?token=<JWT>`.
+
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| GET | `/notifications` | ✅ | List recent notifications (unread first) |
+| GET | `/notifications/unread-count` | ✅ | Badge count `{ "count": 5 }` |
+| POST | `/notifications/{id}/read` | ✅ | Mark one as read |
+| POST | `/notifications/read-all` | ✅ | Mark all as read |
+| GET | `/ws/notifications?token=<jwt>` | JWT | WebSocket — real-time push |
+
+**List notifications:**
+```bash
+curl http://localhost:8081/notifications \
+  -H "Authorization: Bearer <access_token>"
+```
+
+**Unread count:**
+```bash
+curl http://localhost:8081/notifications/unread-count \
+  -H "Authorization: Bearer <access_token>"
+```
+
+**Mark one read:**
+```bash
+curl -X POST http://localhost:8081/notifications/<id>/read \
+  -H "Authorization: Bearer <access_token>"
+```
+
+**Mark all read:**
+```bash
+curl -X POST http://localhost:8081/notifications/read-all \
+  -H "Authorization: Bearer <access_token>"
+```
+
 ## Project Structure
 
 ```
@@ -279,10 +315,16 @@ src/
 │   ├── handler.rs    # Circle endpoint handlers
 │   ├── service.rs    # Circle CRUD, member management
 │   └── models.rs     # Circle request/response types
-└── stories/
-    ├── handler.rs    # Story & highlight endpoint handlers
-    ├── service.rs    # Story CRUD, visibility, likes, comments, highlights
-    └── models.rs     # Story, comment, highlight request/response types
+├── stories/
+│   ├── handler.rs    # Story & highlight endpoint handlers
+│   ├── service.rs    # Story CRUD, visibility, likes, comments, highlights
+│   └── models.rs     # Story, comment, highlight request/response types
+└── notifications/
+    ├── handler.rs    # Notification REST handlers
+    ├── service.rs    # Create, list, mark read, broadcast
+    ├── models.rs     # NotificationResponse
+    ├── ws.rs         # WebSocket upgrade + connection registry
+    └── mod.rs        # Route config
 ```
 
 ## Design Decisions
