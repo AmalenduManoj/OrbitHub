@@ -15,15 +15,20 @@ export default {
           lavender: '#C084FC',
         },
         bg: {
-          base: '#080812',
-          nav: '#0F172A',
-          card: '#141428',
-          hover: '#1B1B35',
+          base: '#0A0A0A',
+          nav: '#0F0F0F',
+          card: '#141414',
+          elevated: '#1C1C1E',
+          hover: '#222224',
         },
         text: {
           primary: '#FFFFFF',
-          secondary: '#A1A1AA',
-          muted: '#71717A',
+          secondary: '#9D9DA3',
+          muted: '#6B6B73',
+        },
+        gray: {
+          700: '#333333',
+          800: '#2C2C2E',
         },
       },
       fontFamily: {
