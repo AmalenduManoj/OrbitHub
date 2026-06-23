@@ -62,12 +62,10 @@ export default function CreateStoryModal({ open, onClose, onCreated }: CreateSto
     setUploadProgress(10);
 
     try {
-      // Step 1: upload to Cloudinary
       setUploadProgress(30);
       const result = await uploadFile(file);
       setUploadProgress(80);
 
-      // Step 2: create story with returned URL
       await createStory({
         media_url: result.url,
         media_type: result.resource_type === 'video' ? 'video' : 'image',
@@ -96,39 +94,45 @@ export default function CreateStoryModal({ open, onClose, onCreated }: CreateSto
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50">
       <div className="bg-elevated w-full sm:max-w-md sm:rounded-3xl rounded-t-3xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="flex items-center justify-between px-4 h-14 border-b border-[#2C2C2E]">
-          <button onClick={onClose} disabled={uploading} className="text-text-secondary hover:text-text-primary transition-all duration-150 text-sm disabled:opacity-50">
-            Cancel
+        <div className="flex items-center justify-between px-5 pt-5 pb-2">
+          <h2 className="text-base font-semibold text-white">New Story</h2>
+          <button
+            onClick={onClose}
+            disabled={uploading}
+            className="w-8 h-8 rounded-full bg-bg-hover flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-hover transition-all duration-150 disabled:opacity-50"
+          >
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
           </button>
-          <h2 className="font-semibold text-white">New Story</h2>
-          <div className="w-12" />
         </div>
 
-        <form onSubmit={handleSubmit} className="p-4 space-y-4">
+        <form onSubmit={handleSubmit} className="px-5 pb-5 space-y-5">
           {error && (
-            <div className="bg-red-900/40 border border-red-500/50 text-red-200 text-sm rounded-lg px-4 py-2">
-              {error}
+            <div className="flex items-center gap-2 bg-red-900/30 text-red-200 text-sm rounded-xl px-4 py-2.5">
+              <svg className="w-4 h-4 shrink-0 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              <span>{error}</span>
             </div>
           )}
 
           {/* File picker / preview */}
           <div>
-            <label className="block text-sm font-medium text-text-secondary mb-2">
-              Photo or Video
-            </label>
             {preview ? (
-              <div className="relative rounded-xl overflow-hidden bg-bg-base mb-2">
+              <div className="relative rounded-2xl overflow-hidden bg-bg-base group">
                 {file?.type.startsWith('video/') ? (
-                  <video src={preview} className="w-full max-h-60 object-contain" controls />
+                  <video src={preview} className="w-full max-h-64 object-contain" controls />
                 ) : (
-                  <img src={preview} alt="" className="w-full max-h-60 object-contain" />
+                  <img src={preview} alt="" className="w-full max-h-64 object-contain" />
                 )}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-150" />
                 <button
                   type="button"
                   onClick={() => { setFile(null); setPreview(null); }}
-                  className="absolute top-2 right-2 w-8 h-8 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80 transition"
+                  className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/40 backdrop-blur-sm text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-150 hover:bg-red-500/80"
                 >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+                  <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
                     <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
                   </svg>
                 </button>
@@ -137,12 +141,17 @@ export default function CreateStoryModal({ open, onClose, onCreated }: CreateSto
               <button
                 type="button"
                 onClick={() => fileRef.current?.click()}
-                className="w-full h-40 rounded-xl border-2 border-dashed border-gray-700 flex flex-col items-center justify-center gap-2 text-text-muted hover:border-primary hover:text-primary transition-all duration-150"
+                className="w-full rounded-2xl border-2 border-dashed border-[#2C2C2E] bg-bg-base/50 hover:bg-bg-base hover:border-primary/50 transition-all duration-150 flex flex-col items-center justify-center gap-3 py-10 group"
               >
-                <svg className="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                </svg>
-                <span className="text-sm">Tap to select</span>
+                <div className="w-14 h-14 rounded-2xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-all duration-150">
+                  <svg className="w-7 h-7 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                </div>
+                <div className="text-center">
+                  <p className="text-sm font-medium text-text-primary">Choose photo or video</p>
+                  <p className="text-xs text-text-muted mt-0.5">Tap to browse files</p>
+                </div>
               </button>
             )}
             <input
@@ -156,23 +165,20 @@ export default function CreateStoryModal({ open, onClose, onCreated }: CreateSto
 
           {/* Caption */}
           <div>
-            <label htmlFor="caption" className="block text-sm font-medium text-text-secondary mb-1">
-              Caption <span className="text-text-muted">(optional)</span>
-            </label>
             <input
               id="caption"
               type="text"
               value={caption}
               onChange={(e) => setCaption(e.target.value)}
-              className="w-full px-4 py-3 rounded-xl bg-bg-base border border-gray-700 text-text-primary placeholder-text-muted focus:outline-none focus:ring-1 focus:ring-primary"
-              placeholder="What's on your mind?"
+              className="w-full px-0 py-2 bg-transparent border-0 border-b border-[#2C2C2E] text-text-primary placeholder-text-muted text-sm focus:outline-none focus:border-primary transition-all duration-150"
+              placeholder="Add a caption…"
               maxLength={500}
             />
           </div>
 
           {/* Expiry */}
           <div>
-            <label htmlFor="expires_at" className="block text-sm font-medium text-text-secondary mb-1">
+            <label htmlFor="expires_at" className="label block mb-2 text-text-muted">
               Expires at
             </label>
             <input
@@ -181,7 +187,7 @@ export default function CreateStoryModal({ open, onClose, onCreated }: CreateSto
               value={expiresAt}
               onChange={(e) => setExpiresAt(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-xl bg-bg-base border border-gray-700 text-text-primary focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full px-4 py-2.5 rounded-xl bg-bg-base border border-[#2C2C2E] text-text-primary text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-150"
             />
           </div>
 
@@ -190,9 +196,9 @@ export default function CreateStoryModal({ open, onClose, onCreated }: CreateSto
 
           {/* Progress bar */}
           {uploading && (
-            <div className="w-full bg-bg-base rounded-full h-2 overflow-hidden">
+            <div className="w-full bg-bg-base rounded-full h-1.5 overflow-hidden">
               <div
-                className="h-full bg-primary rounded-full transition-all duration-300"
+                className="h-full bg-gradient-to-r from-primary to-accent-lavender rounded-full transition-all duration-500 ease-out"
                 style={{ width: `${uploadProgress}%` }}
               />
             </div>
@@ -202,9 +208,21 @@ export default function CreateStoryModal({ open, onClose, onCreated }: CreateSto
           <button
             type="submit"
             disabled={uploading || !file}
-            className="w-full py-3 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold transition-all duration-150 disabled:opacity-50"
+            className="w-full py-3 rounded-xl bg-primary hover:bg-primary-hover text-white font-medium transition-all duration-150 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2"
           >
-            {uploading ? 'Uploading…' : 'Post Story'}
+            {uploading ? (
+              <>
+                <div className="w-4 h-4 border-[1.5px] border-white/30 border-t-white rounded-full animate-spin" />
+                Uploading…
+              </>
+            ) : (
+              <>
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 19V5m0 0l-7 7m7-7l7 7" />
+                </svg>
+                Post Story
+              </>
+            )}
           </button>
         </form>
       </div>
