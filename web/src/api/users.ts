@@ -25,3 +25,13 @@ export async function searchUsers(query: string) {
   const res = await client.get<UserSearchResult[]>('/user/search', { params: { q: query } });
   return res.data;
 }
+
+export async function getFollowers(id: string) {
+  const res = await client.get<UserSearchResult[]>(`/user/${id}/followers`);
+  return res.data;
+}
+
+export async function getFollowing(id: string) {
+  const res = await client.get<UserSearchResult[]>(`/user/${id}/following`);
+  return res.data;
+}

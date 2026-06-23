@@ -9,6 +9,24 @@ use crate::notifications::ws::WsClients;
 use crate::user::models::{ProfileUpdateRequest, SearchQuery};
 use crate::user::service;
 
+pub async fn get_followers(
+    pool: web::Data<PgPool>,
+    path: web::Path<Uuid>,
+) -> Result<HttpResponse, AppError> {
+    let user_id = path.into_inner();
+    let users = service::get_followers(pool.get_ref(), user_id).await?;
+    Ok(HttpResponse::Ok().json(users))
+}
+
+pub async fn get_following(
+    pool: web::Data<PgPool>,
+    path: web::Path<Uuid>,
+) -> Result<HttpResponse, AppError> {
+    let user_id = path.into_inner();
+    let users = service::get_following(pool.get_ref(), user_id).await?;
+    Ok(HttpResponse::Ok().json(users))
+}
+
 pub async fn search(
     pool: web::Data<PgPool>,
     query: web::Query<SearchQuery>,

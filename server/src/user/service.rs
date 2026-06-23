@@ -51,6 +51,38 @@ pub async fn update_profile(
     get_user_profile(pool, user_id).await
 }
 
+pub async fn get_followers(pool: &PgPool, user_id: Uuid) -> Result<Vec<UserSearchResult>, AppError> {
+    let users = sqlx::query_as::<_, UserSearchResult>(
+        "SELECT u.id, u.username, p.avatar_url
+         FROM follows f
+         JOIN users u ON u.id = f.follower_id
+         LEFT JOIN profiles p ON p.user_id = u.id
+         WHERE f.followed_id = $1
+         ORDER BY f.created_at DESC",
+    )
+    .bind(user_id)
+    .fetch_all(pool)
+    .await?;
+
+    Ok(users)
+}
+
+pub async fn get_following(pool: &PgPool, user_id: Uuid) -> Result<Vec<UserSearchResult>, AppError> {
+    let users = sqlx::query_as::<_, UserSearchResult>(
+        "SELECT u.id, u.username, p.avatar_url
+         FROM follows f
+         JOIN users u ON u.id = f.followed_id
+         LEFT JOIN profiles p ON p.user_id = u.id
+         WHERE f.follower_id = $1
+         ORDER BY f.created_at DESC",
+    )
+    .bind(user_id)
+    .fetch_all(pool)
+    .await?;
+
+    Ok(users)
+}
+
 pub async fn search_users(pool: &PgPool, query: &str) -> Result<Vec<UserSearchResult>, AppError> {
     let pattern = format!("%{}%", query);
     let users = sqlx::query_as::<_, UserSearchResult>(

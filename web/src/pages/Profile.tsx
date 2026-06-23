@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getProfile, follow, unfollow } from '../api/users';
+import { getProfile, follow, unfollow, getFollowers, getFollowing } from '../api/users';
 import { useAuth } from '../context/AuthContext';
-import type { UserResponse } from '../types';
+import type { UserResponse, UserSearchResult } from '../types';
+import UserListSheet from '../components/UserListSheet';
 
 export default function Profile() {
   const { id } = useParams<{ id: string }>();
@@ -14,17 +15,35 @@ export default function Profile() {
   const [error, setError] = useState('');
   const [isFollowing, setIsFollowing] = useState(false);
 
+  // Followers / Following sheets
+  const [showFollowers, setShowFollowers] = useState(false);
+  const [followers, setFollowers] = useState<UserSearchResult[]>([]);
+  const [followersLoading, setFollowersLoading] = useState(false);
+  const [showFollowing, setShowFollowing] = useState(false);
+  const [following, setFollowing] = useState<UserSearchResult[]>([]);
+  const [followingLoading, setFollowingLoading] = useState(false);
+
   const isOwnProfile = me && profile && me.id === profile.id;
 
   useEffect(() => {
     if (!id) return;
     setLoading(true);
     setError('');
+    setFollowers([]);
+    setFollowing([]);
     getProfile(id)
-      .then(setProfile)
+      .then((data) => {
+        setProfile(data);
+        if (me) {
+          // Check if the current user follows this profile
+          getFollowers(id)
+            .then((list) => setIsFollowing(list.some((u) => u.id === me.id)))
+            .catch(() => {});
+        }
+      })
       .catch(() => setError('User not found'))
       .finally(() => setLoading(false));
-  }, [id]);
+  }, [id, me]);
 
   const handleFollow = async () => {
     if (!profile) return;
@@ -40,6 +59,32 @@ export default function Profile() {
       }
     } catch {}
   };
+
+  const openFollowers = useCallback(async () => {
+    if (followers.length === 0 && id) {
+      setFollowersLoading(true);
+      try {
+        const data = await getFollowers(id);
+        setFollowers(data);
+      } catch {} finally {
+        setFollowersLoading(false);
+      }
+    }
+    setShowFollowers(true);
+  }, [followers.length, id]);
+
+  const openFollowing = useCallback(async () => {
+    if (following.length === 0 && id) {
+      setFollowingLoading(true);
+      try {
+        const data = await getFollowing(id);
+        setFollowing(data);
+      } catch {} finally {
+        setFollowingLoading(false);
+      }
+    }
+    setShowFollowing(true);
+  }, [following.length, id]);
 
   if (loading) {
     return (
@@ -93,14 +138,14 @@ export default function Profile() {
 
         {/* Stats */}
         <div className="flex items-center justify-center gap-6 mt-4">
-          <div>
+          <button onClick={openFollowers} className="text-center hover:opacity-80 transition">
             <p className="text-lg font-bold text-white">{profile.follower_count}</p>
             <p className="text-xs text-text-muted">Followers</p>
-          </div>
-          <div>
+          </button>
+          <button onClick={openFollowing} className="text-center hover:opacity-80 transition">
             <p className="text-lg font-bold text-white">{profile.following_count}</p>
             <p className="text-xs text-text-muted">Following</p>
-          </div>
+          </button>
         </div>
 
         {/* Follow / Edit */}
@@ -124,6 +169,22 @@ export default function Profile() {
           </button>
         )}
       </div>
+
+      {/* Followers sheet */}
+      <UserListSheet
+        open={showFollowers}
+        onClose={() => setShowFollowers(false)}
+        title="Followers"
+        users={followers}
+      />
+
+      {/* Following sheet */}
+      <UserListSheet
+        open={showFollowing}
+        onClose={() => setShowFollowing(false)}
+        title="Following"
+        users={following}
+      />
     </div>
   );
 }

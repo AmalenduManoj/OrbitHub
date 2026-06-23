@@ -8,6 +8,8 @@ pub fn configure_routes(cfg: &mut web::ServiceConfig) {
     cfg.service(
         web::scope("/user")
             .route("/search", web::get().to(handler::search))
+            .route("/{id}/followers", web::get().to(handler::get_followers))
+            .route("/{id}/following", web::get().to(handler::get_following))
             .route("/{id}", web::get().to(handler::get_user))
             .route("/profile", web::patch().to(handler::update_profile))
             .route("/{id}/follow", web::post().to(handler::follow))
