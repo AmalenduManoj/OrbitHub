@@ -23,6 +23,8 @@ export default function Profile() {
   const [following, setFollowing] = useState<UserSearchResult[]>([]);
   const [followingLoading, setFollowingLoading] = useState(false);
 
+  const [followingIds, setFollowingIds] = useState<Set<string>>(new Set());
+
   const isOwnProfile = me && profile && me.id === profile.id;
 
   useEffect(() => {
@@ -35,7 +37,6 @@ export default function Profile() {
       .then((data) => {
         setProfile(data);
         if (me) {
-          // Check if the current user follows this profile
           getFollowers(id)
             .then((list) => setIsFollowing(list.some((u) => u.id === me.id)))
             .catch(() => {});
@@ -45,20 +46,50 @@ export default function Profile() {
       .finally(() => setLoading(false));
   }, [id, me]);
 
+  useEffect(() => {
+    if (!me) return;
+    getFollowing(me.id)
+      .then((list) => setFollowingIds(new Set(list.map((u) => u.id))))
+      .catch(() => {});
+  }, [me]);
+
+  const syncFollowingIds = useCallback((userId: string, nowFollowing: boolean) => {
+    setFollowingIds((prev) => {
+      const next = new Set(prev);
+      if (nowFollowing) next.add(userId);
+      else next.delete(userId);
+      return next;
+    });
+  }, []);
+
   const handleFollow = async () => {
     if (!profile) return;
     try {
       if (isFollowing) {
         await unfollow(profile.id);
         setIsFollowing(false);
+        syncFollowingIds(profile.id, false);
         setProfile((p) => p ? { ...p, follower_count: p.follower_count - 1 } : p);
       } else {
         await follow(profile.id);
         setIsFollowing(true);
+        syncFollowingIds(profile.id, true);
         setProfile((p) => p ? { ...p, follower_count: p.follower_count + 1 } : p);
       }
     } catch {}
   };
+
+  const handleToggleFollowInList = useCallback(async (userId: string) => {
+    try {
+      if (followingIds.has(userId)) {
+        await unfollow(userId);
+        syncFollowingIds(userId, false);
+      } else {
+        await follow(userId);
+        syncFollowingIds(userId, true);
+      }
+    } catch {}
+  }, [followingIds, syncFollowingIds]);
 
   const openFollowers = useCallback(async () => {
     if (followers.length === 0 && id) {
@@ -176,6 +207,20 @@ export default function Profile() {
         onClose={() => setShowFollowers(false)}
         title="Followers"
         users={followers}
+        renderAction={(u) =>
+          me && u.id !== me.id ? (
+            <button
+              onClick={(e) => { e.stopPropagation(); handleToggleFollowInList(u.id); }}
+              className={`shrink-0 ml-2 px-3 py-1.5 rounded-lg text-xs font-medium transition ${
+                followingIds.has(u.id)
+                  ? 'bg-bg-hover text-text-secondary border border-gray-700 hover:border-red-500 hover:text-red-400'
+                  : 'bg-primary hover:bg-primary-hover text-white'
+              }`}
+            >
+              {followingIds.has(u.id) ? 'Following' : 'Follow'}
+            </button>
+          ) : null
+        }
       />
 
       {/* Following sheet */}
@@ -184,6 +229,20 @@ export default function Profile() {
         onClose={() => setShowFollowing(false)}
         title="Following"
         users={following}
+        renderAction={(u) =>
+          me && u.id !== me.id ? (
+            <button
+              onClick={(e) => { e.stopPropagation(); handleToggleFollowInList(u.id); }}
+              className={`shrink-0 ml-2 px-3 py-1.5 rounded-lg text-xs font-medium transition ${
+                followingIds.has(u.id)
+                  ? 'bg-bg-hover text-text-secondary border border-gray-700 hover:border-red-500 hover:text-red-400'
+                  : 'bg-primary hover:bg-primary-hover text-white'
+              }`}
+            >
+              {followingIds.has(u.id) ? 'Following' : 'Follow'}
+            </button>
+          ) : null
+        }
       />
     </div>
   );

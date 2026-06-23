@@ -1,13 +1,15 @@
 import { useNavigate } from 'react-router-dom';
+import type { ReactNode } from 'react';
 
 interface UserListSheetProps {
   open: boolean;
   onClose: () => void;
   title: string;
   users: Array<{ id: string; username: string; avatar_url: string | null }>;
+  renderAction?: (user: { id: string; username: string; avatar_url: string | null }) => ReactNode;
 }
 
-export default function UserListSheet({ open, onClose, title, users }: UserListSheetProps) {
+export default function UserListSheet({ open, onClose, title, users, renderAction }: UserListSheetProps) {
   const navigate = useNavigate();
 
   if (!open) return null;
@@ -36,22 +38,27 @@ export default function UserListSheet({ open, onClose, title, users }: UserListS
         ) : (
           <div className="space-y-1 overflow-y-auto">
             {users.map((u) => (
-              <button
+              <div
                 key={u.id}
-                onClick={() => { navigate(`/profile/${u.id}`); onClose(); }}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-bg-hover transition text-left"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-bg-hover transition group"
               >
-                <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden flex-shrink-0">
-                  {u.avatar_url ? (
-                    <img src={u.avatar_url} alt="" className="w-full h-full object-cover" />
-                  ) : (
-                    <span className="text-sm font-bold text-white">
-                      {u.username[0]?.toUpperCase()}
-                    </span>
-                  )}
-                </div>
-                <span className="text-sm font-medium text-white">{u.username}</span>
-              </button>
+                <button
+                  onClick={() => { navigate(`/profile/${u.id}`); onClose(); }}
+                  className="flex items-center gap-3 flex-1 text-left min-w-0"
+                >
+                  <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden flex-shrink-0">
+                    {u.avatar_url ? (
+                      <img src={u.avatar_url} alt="" className="w-full h-full object-cover" />
+                    ) : (
+                      <span className="text-sm font-bold text-white">
+                        {u.username[0]?.toUpperCase()}
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-sm font-medium text-white truncate">{u.username}</span>
+                </button>
+                {renderAction?.(u)}
+              </div>
             ))}
           </div>
         )}
