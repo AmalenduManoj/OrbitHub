@@ -36,7 +36,7 @@ export default function CommentList({ comments, currentUserId, onAdd, onDelete }
             {c.avatar_url ? (
               <img src={c.avatar_url} alt="" className="w-7 h-7 rounded-full mt-0.5" />
             ) : (
-              <div className="w-7 h-7 rounded-full bg-primary/30 flex items-center justify-center text-[10px] font-bold text-white shrink-0 mt-0.5">
+              <div className="w-7 h-7 rounded-full bg-primary/15 flex items-center justify-center text-[10px] font-semibold text-white shrink-0 mt-0.5">
                 {c.username[0]?.toUpperCase()}
               </div>
             )}
@@ -59,19 +59,19 @@ export default function CommentList({ comments, currentUserId, onAdd, onDelete }
       </div>
 
       {/* Comment input */}
-      <form onSubmit={handleSubmit} className="border-t border-gray-800 p-4 flex gap-2">
+      <form onSubmit={handleSubmit} className="border-t border-[#2C2C2E] p-4 flex gap-2">
         <input
           type="text"
           value={content}
           onChange={(e) => setContent(e.target.value)}
           placeholder="Add a comment…"
           maxLength={500}
-          className="flex-1 px-3 py-2 rounded-lg bg-bg-card border border-gray-700 text-text-primary placeholder-text-muted text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+          className="flex-1 px-3 py-2.5 rounded-xl bg-bg-card border border-gray-700 text-text-primary placeholder-text-muted text-sm focus:outline-none focus:ring-1 focus:ring-primary"
         />
         <button
           type="submit"
           disabled={!content.trim() || sending}
-          className="px-4 py-2 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-medium transition disabled:opacity-50"
+          className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-medium transition-all duration-150 disabled:opacity-50"
         >
           {sending ? '…' : 'Send'}
         </button>

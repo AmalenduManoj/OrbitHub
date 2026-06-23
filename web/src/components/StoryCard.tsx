@@ -11,7 +11,7 @@ export default function StoryCard({ story }: StoryCardProps) {
   return (
     <button
       onClick={() => navigate(`/stories/${story.id}`)}
-      className="relative w-full aspect-[3/4] rounded-xl overflow-hidden bg-bg-card group text-left focus:outline-none focus:ring-2 focus:ring-primary"
+      className="relative w-full aspect-[3/4] rounded-2xl overflow-hidden bg-bg-card group text-left focus:outline-none focus:ring-1 focus:ring-primary transition-all duration-150"
     >
       {/* Thumbnail */}
       <img
@@ -31,10 +31,10 @@ export default function StoryCard({ story }: StoryCardProps) {
             <img
               src={story.avatar_url}
               alt=""
-              className="w-6 h-6 rounded-full ring-2 ring-primary/60"
+              className="w-6 h-6 rounded-full ring-1 ring-primary/40"
             />
           ) : (
-            <div className="w-6 h-6 rounded-full bg-primary/30 ring-2 ring-primary/60 flex items-center justify-center text-[10px] font-bold text-white">
+            <div className="w-6 h-6 rounded-full bg-primary/15 ring-1 ring-primary/40 flex items-center justify-center text-[10px] font-semibold text-white">
               {story.username[0]?.toUpperCase()}
             </div>
           )}
@@ -56,7 +56,7 @@ export default function StoryCard({ story }: StoryCardProps) {
 
       {/* Like count badge */}
       {story.like_count > 0 && (
-        <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/50 rounded-full px-2 py-0.5 text-[11px] text-white">
+        <div className="absolute top-2 right-2 flex items-center gap-1 bg-black/40 rounded-full px-2 py-0.5 text-[11px] text-white">
           <svg className="w-3 h-3 text-accent-pink" fill="currentColor" viewBox="0 0 24 24">
             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
           </svg>

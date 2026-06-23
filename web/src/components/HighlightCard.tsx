@@ -11,7 +11,7 @@ export default function HighlightCard({ highlight }: HighlightCardProps) {
   return (
     <button
       onClick={() => navigate(`/highlights/${highlight.id}`)}
-      className="relative aspect-[3/4] rounded-xl overflow-hidden bg-bg-card group text-left focus:outline-none focus:ring-2 focus:ring-primary"
+      className="relative aspect-[3/4] rounded-2xl overflow-hidden bg-bg-card group text-left focus:outline-none focus:ring-1 focus:ring-primary"
     >
       {/* Cover image or placeholder */}
       {highlight.cover_story_id ? (

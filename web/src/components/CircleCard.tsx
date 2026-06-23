@@ -12,11 +12,11 @@ export default function CircleCard({ circle, onDelete }: CircleCardProps) {
   return (
     <div
       onClick={() => navigate(`/circles/${circle.id}`)}
-      className="bg-bg-card rounded-xl p-4 border border-gray-800 hover:border-primary/50 transition cursor-pointer group"
+      className="bg-bg-card rounded-2xl p-5 border border-[#2C2C2E] hover:border-primary/50 transition-all duration-150 cursor-pointer group"
     >
       <div className="flex items-center justify-between mb-2">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-primary/20 flex items-center justify-center text-primary">
+          <div className="w-10 h-10 rounded-full bg-primary/15 flex items-center justify-center text-primary">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
@@ -31,7 +31,7 @@ export default function CircleCard({ circle, onDelete }: CircleCardProps) {
             e.stopPropagation();
             onDelete(circle.id);
           }}
-          className="text-text-muted hover:text-red-400 transition opacity-0 group-hover:opacity-100 p-1"
+          className="text-text-muted hover:text-red-400 transition-all duration-150 opacity-0 group-hover:opacity-100 p-1"
           title="Delete circle"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
