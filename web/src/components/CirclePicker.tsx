@@ -29,7 +29,7 @@ export default function CirclePicker({ circles, selected, onChange }: CirclePick
               key={c.id}
               type="button"
               onClick={() => toggle(c.id)}
-              className={`px-3 py-1.5 rounded-full text-sm font-medium transition border ${
+              className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all duration-150 border ${
                 isSelected
                   ? 'bg-primary border-primary text-white'
                   : 'bg-bg-card border-gray-700 text-text-secondary hover:border-primary'

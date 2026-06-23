@@ -51,10 +51,10 @@ export default function CreateHighlightModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/70">
-      <div className="bg-bg-card w-full sm:max-w-md sm:rounded-2xl rounded-t-2xl p-4">
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50">
+      <div className="bg-elevated w-full sm:max-w-md sm:rounded-3xl rounded-t-3xl p-5">
         <div className="flex items-center justify-between mb-4">
-          <button onClick={onClose} className="text-text-secondary hover:text-text-primary text-sm transition">
+          <button onClick={onClose} className="text-text-secondary hover:text-text-primary text-sm transition-all duration-150">
             Cancel
           </button>
           <h2 className="font-semibold text-white">New Highlight</h2>
@@ -62,7 +62,7 @@ export default function CreateHighlightModal({
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="bg-red-900/40 border border-red-500/50 text-red-200 text-sm rounded-lg px-4 py-2">
+            <div className="bg-red-900/40 border border-red-500/50 text-red-200 text-sm rounded-xl px-4 py-2">
               {error}
             </div>
           )}
@@ -77,7 +77,7 @@ export default function CreateHighlightModal({
               onChange={(e) => setName(e.target.value)}
               maxLength={50}
               autoFocus
-              className="w-full px-4 py-3 rounded-lg bg-bg-base border border-gray-700 text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-4 py-3 rounded-xl bg-bg-base border border-gray-700 text-text-primary placeholder-text-muted focus:outline-none focus:ring-1 focus:ring-primary"
               placeholder="Best of 2026"
             />
           </div>
@@ -87,7 +87,7 @@ export default function CreateHighlightModal({
           <button
             type="submit"
             disabled={submitting || !name.trim()}
-            className="w-full py-3 rounded-lg bg-primary hover:bg-primary-hover text-white font-semibold transition disabled:opacity-50"
+            className="w-full py-3 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold transition-all duration-150 disabled:opacity-50"
           >
             {submitting ? 'Creating…' : 'Create Highlight'}
           </button>

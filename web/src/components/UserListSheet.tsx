@@ -16,18 +16,18 @@ export default function UserListSheet({ open, onClose, title, users, renderActio
 
   return (
     <div
-      className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center bg-black/70"
+      className="fixed inset-0 z-[70] flex items-end sm:items-center justify-center bg-black/50"
       onClick={onClose}
     >
       <div
-        className="bg-bg-card w-full sm:max-w-sm sm:rounded-2xl rounded-t-2xl p-4 max-h-[70vh] flex flex-col"
+        className="bg-elevated w-full sm:max-w-sm sm:rounded-3xl rounded-t-3xl p-5 max-h-[70vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-3">
-          <h3 className="font-semibold text-white">{title}</h3>
+          <h3 className="font-medium text-white text-sm">{title}</h3>
           <button
             onClick={onClose}
-            className="text-text-secondary hover:text-text-primary text-sm transition"
+            className="text-text-secondary hover:text-text-primary text-sm transition-all duration-150"
           >
             Close
           </button>
@@ -40,17 +40,17 @@ export default function UserListSheet({ open, onClose, title, users, renderActio
             {users.map((u) => (
               <div
                 key={u.id}
-                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-bg-hover transition group"
+                className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-bg-hover transition-all duration-150 group"
               >
                 <button
                   onClick={() => { navigate(`/profile/${u.id}`); onClose(); }}
                   className="flex items-center gap-3 flex-1 text-left min-w-0"
                 >
-                  <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center overflow-hidden flex-shrink-0">
+                  <div className="w-9 h-9 rounded-full bg-primary/15 flex items-center justify-center overflow-hidden flex-shrink-0 ring-1 ring-primary/40">
                     {u.avatar_url ? (
                       <img src={u.avatar_url} alt="" className="w-full h-full object-cover" />
                     ) : (
-                      <span className="text-sm font-bold text-white">
+                      <span className="text-sm font-semibold text-white">
                         {u.username[0]?.toUpperCase()}
                       </span>
                     )}

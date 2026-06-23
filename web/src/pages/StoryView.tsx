@@ -309,13 +309,13 @@ export default function StoryView() {
 
       {/* Highlight picker overlay */}
       {showHlPicker && (
-        <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/70">
-          <div className="bg-bg-card w-full sm:max-w-sm sm:rounded-2xl rounded-t-2xl p-4">
+        <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/50">
+          <div className="bg-elevated w-full sm:max-w-sm sm:rounded-3xl rounded-t-3xl p-5">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="font-semibold text-white">Save to Highlight</h3>
+              <h3 className="font-medium text-white text-sm">Save to Highlight</h3>
               <button
                 onClick={() => setShowHlPicker(false)}
-                className="text-text-secondary hover:text-text-primary text-sm transition"
+                className="text-text-secondary hover:text-text-primary text-sm transition-all duration-150"
               >
                 Cancel
               </button>
@@ -327,7 +327,7 @@ export default function StoryView() {
 
             {hlLoading ? (
               <div className="flex justify-center py-6">
-                <div className="animate-spin h-6 w-6 border-2 border-primary border-t-transparent rounded-full" />
+                <div className="animate-spin h-6 w-6 border-[1.5px] border-primary border-t-transparent rounded-full" />
               </div>
             ) : highlights.length === 0 ? (
               <p className="text-text-muted text-sm text-center py-4">No highlights yet</p>
@@ -337,10 +337,10 @@ export default function StoryView() {
                   <button
                     key={hl.id}
                     onClick={() => handleSaveToHl(hl.id)}
-                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-bg-hover transition text-left"
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg hover:bg-bg-hover transition-all duration-150 text-left"
                   >
-                    <div className="w-9 h-9 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
-                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                    <div className="w-9 h-9 rounded-lg bg-primary/15 flex items-center justify-center text-primary">
+                      <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
                       </svg>
                     </div>
@@ -355,7 +355,7 @@ export default function StoryView() {
 
             <button
               onClick={() => { setShowHlPicker(false); setShowCreateHl(true); }}
-              className="w-full mt-3 py-2.5 rounded-lg border border-dashed border-gray-700 text-text-secondary hover:border-primary hover:text-primary text-sm font-medium transition"
+              className="w-full mt-3 py-2.5 rounded-xl border border-dashed border-gray-700 text-text-secondary hover:border-primary hover:text-primary text-sm font-medium transition-all duration-150"
             >
               + New Highlight
             </button>
