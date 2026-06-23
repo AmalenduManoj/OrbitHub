@@ -56,7 +56,7 @@ function NotificationItem({ notif, onRead }: { notif: NotificationResponse; onRe
   return (
     <button
       onClick={handleClick}
-      className={`w-full text-left flex items-start gap-3 px-4 py-3 transition ${
+      className={`w-full text-left flex items-start gap-3 px-4 py-3 transition-all duration-150 ${
         notif.is_read
           ? 'bg-bg-base'
           : 'bg-bg-card border-l-2 border-primary'
@@ -84,7 +84,7 @@ export default function Notifications() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        <div className="w-6 h-6 border-[1.5px] border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -96,7 +96,7 @@ export default function Notifications() {
         {unreadCount > 0 && (
           <button
             onClick={markAllRead}
-            className="text-sm text-primary hover:text-primary-light transition font-medium"
+            className="text-sm text-primary hover:text-primary-light transition-all duration-150 font-medium"
           >
             Mark all read
           </button>

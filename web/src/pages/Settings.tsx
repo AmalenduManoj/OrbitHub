@@ -70,12 +70,12 @@ export default function Settings() {
 
       <form onSubmit={handleSubmit} className="space-y-4">
         {error && (
-          <div className="bg-red-900/40 border border-red-500/50 text-red-200 text-sm rounded-lg px-4 py-2">
+          <div className="bg-red-900/40 border border-red-500/50 text-red-200 text-sm rounded-xl px-4 py-2">
             {error}
           </div>
         )}
         {success && (
-          <div className="bg-green-900/40 border border-green-500/50 text-green-200 text-sm rounded-lg px-4 py-2">
+          <div className="bg-green-900/40 border border-green-500/50 text-green-200 text-sm rounded-xl px-4 py-2">
             Profile updated!
           </div>
         )}
@@ -87,16 +87,16 @@ export default function Settings() {
           </label>
           <div className="flex items-center gap-4">
             {displayUrl ? (
-              <img src={displayUrl} alt="" className="w-16 h-16 rounded-full object-cover ring-2 ring-primary/60" />
+              <img src={displayUrl} alt="" className="w-16 h-16 rounded-full object-cover ring-1 ring-primary/40" />
             ) : (
-              <div className="w-16 h-16 rounded-full bg-primary/30 ring-2 ring-primary/60 flex items-center justify-center text-xl font-bold text-white">
+              <div className="w-16 h-16 rounded-full bg-primary/15 ring-1 ring-primary/40 flex items-center justify-center text-xl font-semibold text-white">
                 {user?.username[0]?.toUpperCase()}
               </div>
             )}
             <button
               type="button"
               onClick={() => fileRef.current?.click()}
-              className="px-4 py-2 rounded-lg bg-bg-hover border border-gray-700 text-text-secondary text-sm hover:border-primary hover:text-primary transition"
+              className="px-4 py-2 rounded-xl bg-bg-hover border border-gray-700 text-text-secondary text-sm hover:border-primary hover:text-primary transition-all duration-150"
             >
               {displayUrl ? 'Change' : 'Upload'}
             </button>
@@ -104,7 +104,7 @@ export default function Settings() {
               <button
                 type="button"
                 onClick={() => { setAvatarFile(null); setAvatarPreview(null); setAvatarUrl(''); }}
-                className="text-sm text-text-muted hover:text-red-400 transition"
+                className="text-sm text-text-muted hover:text-red-400 transition-all duration-150"
               >
                 Remove
               </button>
@@ -130,7 +130,7 @@ export default function Settings() {
             onChange={(e) => setBio(e.target.value)}
             rows={3}
             maxLength={500}
-            className="w-full px-4 py-3 rounded-lg bg-bg-card border border-gray-700 text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary resize-none"
+            className="w-full px-4 py-3 rounded-xl bg-bg-card border border-gray-700 text-text-primary placeholder-text-muted focus:outline-none focus:ring-1 focus:ring-primary resize-none"
             placeholder="Tell us about yourself"
           />
         </div>
@@ -144,7 +144,7 @@ export default function Settings() {
             id="gender"
             value={gender}
             onChange={(e) => setGender(e.target.value)}
-            className="w-full px-4 py-3 rounded-lg bg-bg-card border border-gray-700 text-text-primary focus:outline-none focus:ring-2 focus:ring-primary"
+            className="w-full px-4 py-3 rounded-xl bg-bg-card border border-gray-700 text-text-primary focus:outline-none focus:ring-1 focus:ring-primary"
           >
             <option value="">Prefer not to say</option>
             <option value="male">Male</option>
@@ -164,7 +164,7 @@ export default function Settings() {
         <button
           type="submit"
           disabled={saving}
-          className="w-full py-3 rounded-lg bg-primary hover:bg-primary-hover text-white font-semibold transition disabled:opacity-50"
+          className="w-full py-3 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold transition-all duration-150 disabled:opacity-50"
         >
           {uploading ? 'Uploading…' : saving ? 'Saving…' : 'Save Profile'}
         </button>
@@ -173,7 +173,7 @@ export default function Settings() {
       <div className="mt-8 pt-6 border-t border-gray-800">
         <button
           onClick={() => { logout(); navigate('/login'); }}
-          className="w-full py-3 rounded-lg border border-red-500/50 text-red-400 hover:bg-red-900/20 font-medium transition"
+          className="w-full py-3 rounded-xl border border-red-500/50 text-red-400 hover:bg-red-900/20 font-medium transition-all duration-150"
         >
           Sign Out
         </button>

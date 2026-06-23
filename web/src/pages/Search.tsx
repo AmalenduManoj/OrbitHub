@@ -54,13 +54,13 @@ export default function Search() {
           value={query}
           onChange={(e) => handleChange(e.target.value)}
           placeholder="Search for people..."
-          className="w-full h-11 pl-10 pr-4 rounded-xl bg-bg-card border border-gray-700 text-text-primary placeholder-text-muted text-sm outline-none focus:border-primary transition"
+          className="w-full h-11 pl-10 pr-4 rounded-xl bg-bg-card border border-gray-700 text-text-primary placeholder-text-muted text-sm outline-none focus:border-primary transition-all duration-150"
         />
       </div>
 
       {searching && (
         <div className="flex items-center justify-center py-12">
-          <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+          <div className="w-6 h-6 border-[1.5px] border-primary border-t-transparent rounded-full animate-spin" />
         </div>
       )}
 

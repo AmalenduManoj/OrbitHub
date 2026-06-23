@@ -158,7 +158,7 @@ export default function CircleDetail() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full" />
+        <div className="animate-spin h-8 w-8 border-[1.5px] border-primary border-t-transparent rounded-full" />
       </div>
     );
   }
@@ -191,7 +191,7 @@ export default function CircleDetail() {
       </button>
 
       {/* Circle name */}
-      <div className="bg-bg-card rounded-xl p-4 border border-gray-800 mb-4">
+      <div className="bg-bg-card rounded-2xl p-5 mb-4">
         {editingName ? (
           <div className="flex gap-2">
             <input
@@ -200,18 +200,18 @@ export default function CircleDetail() {
               onChange={(e) => setName(e.target.value)}
               maxLength={50}
               autoFocus
-              className="flex-1 px-3 py-2 rounded-lg bg-bg-base border border-gray-700 text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              className="flex-1 px-3 py-2 rounded-xl bg-bg-base border border-gray-700 text-text-primary text-sm focus:outline-none focus:ring-1 focus:ring-primary"
             />
             <button
               onClick={handleRename}
               disabled={savingName}
-              className="px-3 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary-hover transition disabled:opacity-50"
+              className="px-3 py-2 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary-hover transition-all duration-150 disabled:opacity-50"
             >
               {savingName ? '…' : 'Save'}
             </button>
             <button
               onClick={() => { setEditingName(false); setName(circle.name); }}
-              className="px-3 py-2 rounded-lg text-text-secondary hover:text-text-primary text-sm transition"
+              className="px-3 py-2 rounded-xl text-text-secondary hover:text-text-primary text-sm transition-all duration-150"
             >
               Cancel
             </button>
@@ -225,7 +225,7 @@ export default function CircleDetail() {
             {isOwner && (
               <button
                 onClick={() => setEditingName(true)}
-                className="text-text-secondary hover:text-primary transition"
+                className="text-text-secondary hover:text-primary transition-all duration-150"
               >
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
@@ -238,7 +238,7 @@ export default function CircleDetail() {
         {isOwner && (
           <button
             onClick={handleDelete}
-            className="mt-3 text-sm text-red-400 hover:text-red-300 transition"
+            className="mt-3 text-sm text-red-400 hover:text-red-300 transition-all duration-150"
           >
             Delete circle
           </button>
@@ -247,19 +247,19 @@ export default function CircleDetail() {
 
       {/* Error */}
       {error && (
-        <div className="bg-red-900/40 border border-red-500/50 text-red-200 text-sm rounded-lg px-4 py-2 mb-4">
+        <div className="bg-red-900/40 border border-red-500/50 text-red-200 text-sm rounded-xl px-4 py-2 mb-4">
           {error}
         </div>
       )}
 
       {/* Members */}
-      <div className="bg-bg-card rounded-xl border border-gray-800 overflow-hidden">
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-800">
+      <div className="bg-bg-card rounded-2xl overflow-hidden border border-[#2C2C2E]">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-[#2C2C2E]">
           <h2 className="font-semibold text-white">Members ({members.length})</h2>
           {isOwner && (
             <button
               onClick={() => setShowAdd(true)}
-              className="text-primary hover:text-primary-light text-sm font-medium transition"
+              className="text-primary hover:text-primary-light text-sm font-medium transition-all duration-150"
             >
               + Add
             </button>
@@ -268,7 +268,7 @@ export default function CircleDetail() {
 
         {/* Add panel — search + select */}
         {showAdd && (
-          <div className="border-b border-gray-800">
+          <div className="border-b border-[#2C2C2E]">
             <div className="p-4">
               {/* Search input */}
               <div className="relative">
@@ -278,29 +278,29 @@ export default function CircleDetail() {
                   value={searchQuery}
                   onChange={(e) => handleSearch(e.target.value)}
                   placeholder="Search by username…"
-                  className="w-full px-3 py-2 rounded-lg bg-bg-base border border-gray-700 text-text-primary placeholder-text-muted text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-3 py-2 rounded-xl bg-bg-base border border-gray-700 text-text-primary placeholder-text-muted text-sm focus:outline-none focus:ring-1 focus:ring-primary"
                 />
                 {searching && (
                   <div className="absolute right-3 top-1/2 -translate-y-1/2">
-                    <div className="animate-spin h-4 w-4 border-2 border-primary border-t-transparent rounded-full" />
+                    <div className="animate-spin h-4 w-4 border-[1.5px] border-primary border-t-transparent rounded-full" />
                   </div>
                 )}
               </div>
 
               {/* Search results */}
               {searchResults.length > 0 && (
-                <div className="mt-2 bg-bg-base rounded-lg border border-gray-700 max-h-40 overflow-y-auto">
+                  <div className="mt-2 bg-bg-base rounded-xl border border-gray-700 max-h-40 overflow-y-auto">
                   {searchResults.map((r) => (
                     <button
                       key={r.id}
                       type="button"
                       onClick={() => addToSelection(r)}
-                      className="w-full flex items-center gap-3 px-3 py-2 hover:bg-bg-hover transition text-left"
+                      className="w-full flex items-center gap-3 px-3 py-2 hover:bg-bg-hover transition-all duration-150 text-left"
                     >
                       {r.avatar_url ? (
                         <img src={r.avatar_url} alt="" className="w-8 h-8 rounded-full" />
                       ) : (
-                        <div className="w-8 h-8 rounded-full bg-primary/30 flex items-center justify-center text-xs font-bold text-white">
+                        <div className="w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center text-xs font-semibold text-white">
                           {r.username[0]?.toUpperCase()}
                         </div>
                       )}
@@ -316,13 +316,13 @@ export default function CircleDetail() {
                   {selectedUsers.map((u) => (
                     <span
                       key={u.id}
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/20 text-primary text-sm"
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/15 text-primary text-sm"
                     >
                       @{u.username}
                       <button
                         type="button"
                         onClick={() => removeFromSelection(u.id)}
-                        className="hover:text-white transition"
+                        className="hover:text-white transition-all duration-150"
                       >
                         <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}>
                           <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -338,7 +338,7 @@ export default function CircleDetail() {
                 <button
                   onClick={handleAddMembers}
                   disabled={addingMember}
-                  className="mt-3 w-full py-2 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-medium transition disabled:opacity-50"
+                  className="mt-3 w-full py-2 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-medium transition-all duration-150 disabled:opacity-50"
                 >
                   {addingMember ? 'Adding…' : `Add ${selectedUsers.length} member${selectedUsers.length > 1 ? 's' : ''}`}
                 </button>
@@ -359,7 +359,7 @@ export default function CircleDetail() {
                   {m.avatar_url ? (
                     <img src={m.avatar_url} alt="" className="w-8 h-8 rounded-full" />
                   ) : (
-                    <div className="w-8 h-8 rounded-full bg-primary/30 flex items-center justify-center text-xs font-bold text-white">
+                    <div className="w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center text-xs font-semibold text-white">
                       {m.username[0]?.toUpperCase()}
                     </div>
                   )}
@@ -371,7 +371,7 @@ export default function CircleDetail() {
                 {isOwner && (
                   <button
                     onClick={() => handleRemoveMember(m.id)}
-                    className="text-text-muted hover:text-red-400 transition text-sm"
+                    className="text-text-muted hover:text-red-400 transition-all duration-150 text-sm"
                   >
                     Remove
                   </button>

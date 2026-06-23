@@ -36,7 +36,7 @@ export default function Login() {
 
         <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="bg-red-900/40 border border-red-500/50 text-red-200 text-sm rounded-lg px-4 py-2">
+            <div className="bg-red-900/40 border border-red-500/50 text-red-200 text-sm rounded-xl px-4 py-2">
               {error}
             </div>
           )}
@@ -51,7 +51,7 @@ export default function Login() {
               value={credential}
               onChange={(e) => setCredential(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-lg bg-bg-card border border-gray-700 text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-4 py-3 rounded-xl bg-bg-card border border-gray-700 text-text-primary placeholder-text-muted focus:outline-none focus:ring-1 focus:ring-primary"
               placeholder="you@example.com"
             />
           </div>
@@ -66,7 +66,7 @@ export default function Login() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full px-4 py-3 rounded-lg bg-bg-card border border-gray-700 text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full px-4 py-3 rounded-xl bg-bg-card border border-gray-700 text-text-primary placeholder-text-muted focus:outline-none focus:ring-1 focus:ring-primary"
               placeholder="••••••••"
             />
           </div>
@@ -74,7 +74,7 @@ export default function Login() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full py-3 rounded-lg bg-primary hover:bg-primary-hover text-white font-semibold transition disabled:opacity-50"
+            className="w-full py-3 rounded-xl bg-primary hover:bg-primary-hover text-white font-semibold transition-all duration-150 disabled:opacity-50"
           >
             {submitting ? 'Signing in…' : 'Sign In'}
           </button>

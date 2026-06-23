@@ -120,7 +120,7 @@ export default function Profile() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full" />
+        <div className="animate-spin h-8 w-8 border-[1.5px] border-primary border-t-transparent rounded-full" />
       </div>
     );
   }
@@ -145,7 +145,7 @@ export default function Profile() {
       {!isOwnProfile && (
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-1 text-text-secondary hover:text-text-primary text-sm mb-4 transition"
+          className="flex items-center gap-1 text-text-secondary hover:text-text-primary text-sm mb-4 transition-all duration-150"
         >
           <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -155,11 +155,11 @@ export default function Profile() {
       )}
 
       {/* Profile card */}
-      <div className="bg-bg-card rounded-xl p-6 border border-gray-800 text-center">
+      <div className="bg-bg-card rounded-2xl p-7 text-center">
         {profile.avatar_url ? (
-          <img src={profile.avatar_url} alt="" className="w-20 h-20 rounded-full mx-auto mb-3 ring-2 ring-primary/60" />
+          <img src={profile.avatar_url} alt="" className="w-20 h-20 rounded-full mx-auto mb-3 ring-1 ring-primary/40" />
         ) : (
-          <div className="w-20 h-20 rounded-full mx-auto mb-3 bg-primary/30 ring-2 ring-primary/60 flex items-center justify-center text-2xl font-bold text-white">
+          <div className="w-20 h-20 rounded-full mx-auto mb-3 bg-primary/15 ring-1 ring-primary/40 flex items-center justify-center text-2xl font-semibold text-white">
             {profile.username[0]?.toUpperCase()}
           </div>
         )}
@@ -169,12 +169,12 @@ export default function Profile() {
 
         {/* Stats */}
         <div className="flex items-center justify-center gap-6 mt-4">
-          <button onClick={openFollowers} className="text-center hover:opacity-80 transition">
-            <p className="text-lg font-bold text-white">{profile.follower_count}</p>
+          <button onClick={openFollowers} className="text-center hover:opacity-80 transition-all duration-150">
+            <p className="text-lg font-semibold text-white">{profile.follower_count}</p>
             <p className="text-xs text-text-muted">Followers</p>
           </button>
-          <button onClick={openFollowing} className="text-center hover:opacity-80 transition">
-            <p className="text-lg font-bold text-white">{profile.following_count}</p>
+          <button onClick={openFollowing} className="text-center hover:opacity-80 transition-all duration-150">
+            <p className="text-lg font-semibold text-white">{profile.following_count}</p>
             <p className="text-xs text-text-muted">Following</p>
           </button>
         </div>
@@ -183,7 +183,7 @@ export default function Profile() {
         {!isOwnProfile ? (
           <button
             onClick={handleFollow}
-            className={`mt-4 px-6 py-2 rounded-lg text-sm font-medium transition ${
+            className={`mt-4 px-6 py-2 rounded-xl text-sm font-medium transition-all duration-150 ${
               isFollowing
                 ? 'bg-bg-hover text-text-secondary border border-gray-700 hover:border-red-500 hover:text-red-400'
                 : 'bg-primary hover:bg-primary-hover text-white'
@@ -194,7 +194,7 @@ export default function Profile() {
         ) : (
           <button
             onClick={() => navigate('/settings')}
-            className="mt-4 px-6 py-2 rounded-lg bg-bg-hover text-text-secondary border border-gray-700 text-sm font-medium hover:border-primary hover:text-primary transition"
+            className="mt-4 px-6 py-2 rounded-xl bg-bg-hover text-text-secondary border border-gray-700 text-sm font-medium hover:border-primary hover:text-primary transition-all duration-150"
           >
             Edit Profile
           </button>
@@ -211,7 +211,7 @@ export default function Profile() {
           me && u.id !== me.id ? (
             <button
               onClick={(e) => { e.stopPropagation(); handleToggleFollowInList(u.id); }}
-              className={`shrink-0 ml-2 px-3 py-1.5 rounded-lg text-xs font-medium transition ${
+              className={`shrink-0 ml-2 px-3 py-1.5 rounded-xl text-xs font-medium transition-all duration-150 ${
                 followingIds.has(u.id)
                   ? 'bg-bg-hover text-text-secondary border border-gray-700 hover:border-red-500 hover:text-red-400'
                   : 'bg-primary hover:bg-primary-hover text-white'
@@ -233,7 +233,7 @@ export default function Profile() {
           me && u.id !== me.id ? (
             <button
               onClick={(e) => { e.stopPropagation(); handleToggleFollowInList(u.id); }}
-              className={`shrink-0 ml-2 px-3 py-1.5 rounded-lg text-xs font-medium transition ${
+              className={`shrink-0 ml-2 px-3 py-1.5 rounded-xl text-xs font-medium transition-all duration-150 ${
                 followingIds.has(u.id)
                   ? 'bg-bg-hover text-text-secondary border border-gray-700 hover:border-red-500 hover:text-red-400'
                   : 'bg-primary hover:bg-primary-hover text-white'

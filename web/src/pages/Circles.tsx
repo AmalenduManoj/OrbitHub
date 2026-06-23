@@ -64,7 +64,7 @@ export default function Circles() {
         <h1 className="text-xl font-bold text-white">Circles</h1>
         <button
           onClick={() => setShowCreate(true)}
-          className="w-9 h-9 rounded-full bg-primary hover:bg-primary-hover text-white flex items-center justify-center transition"
+          className="w-9 h-9 rounded-full bg-primary hover:bg-primary-hover text-white flex items-center justify-center transition-all duration-150"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -74,14 +74,14 @@ export default function Circles() {
 
       {/* Error */}
       {error && (
-        <div className="bg-red-900/40 border border-red-500/50 text-red-200 text-sm rounded-lg px-4 py-2 mb-4">
+        <div className="bg-red-900/40 border border-red-500/50 text-red-200 text-sm rounded-xl px-4 py-2 mb-4">
           {error}
         </div>
       )}
 
       {/* Create inline */}
       {showCreate && (
-        <div className="bg-bg-card rounded-xl p-4 border border-gray-800 mb-4 flex gap-2">
+        <div className="bg-bg-card rounded-2xl p-5 mb-4 flex gap-2">
           <input
             type="text"
             value={newName}
@@ -89,18 +89,18 @@ export default function Circles() {
             placeholder="Circle name"
             maxLength={50}
             autoFocus
-            className="flex-1 px-3 py-2 rounded-lg bg-bg-base border border-gray-700 text-text-primary placeholder-text-muted text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+            className="flex-1 px-3 py-2 rounded-xl bg-bg-base border border-gray-700 text-text-primary placeholder-text-muted text-sm focus:outline-none focus:ring-1 focus:ring-primary"
           />
           <button
             onClick={handleCreate}
             disabled={creating || !newName.trim()}
-            className="px-4 py-2 rounded-lg bg-primary hover:bg-primary-hover text-white text-sm font-medium transition disabled:opacity-50"
+            className="px-4 py-2 rounded-xl bg-primary hover:bg-primary-hover text-white text-sm font-medium transition-all duration-150 disabled:opacity-50"
           >
             {creating ? '…' : 'Create'}
           </button>
           <button
             onClick={() => setShowCreate(false)}
-            className="px-3 py-2 rounded-lg text-text-secondary hover:text-text-primary text-sm transition"
+            className="px-3 py-2 rounded-xl text-text-secondary hover:text-text-primary text-sm transition-all duration-150"
           >
             Cancel
           </button>
@@ -110,7 +110,7 @@ export default function Circles() {
       {/* List */}
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full" />
+          <div className="animate-spin h-8 w-8 border-[1.5px] border-primary border-t-transparent rounded-full" />
         </div>
       ) : circles.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 gap-2">
@@ -121,7 +121,7 @@ export default function Circles() {
           <p className="text-text-muted text-sm">Create a circle to organize your audience</p>
           <button
             onClick={() => setShowCreate(true)}
-            className="mt-2 px-6 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary-hover transition"
+            className="mt-2 px-6 py-2 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary-hover transition-all duration-150"
           >
             Create Circle
           </button>

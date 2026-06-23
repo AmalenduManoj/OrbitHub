@@ -42,7 +42,7 @@ export default function Feed() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full" />
+        <div className="animate-spin h-8 w-8 border-[1.5px] border-primary border-t-transparent rounded-full" />
       </div>
     );
   }
@@ -53,7 +53,7 @@ export default function Feed() {
         <p className="text-text-muted">{error}</p>
         <button
           onClick={fetchFeed}
-          className="px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary-hover transition"
+          className="px-4 py-2 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary-hover transition-all duration-150"
         >
           Retry
         </button>
@@ -73,7 +73,7 @@ export default function Feed() {
         <p className="text-text-muted text-sm">Create your first story to get started</p>
         <button
           onClick={() => setShowCreate(true)}
-          className="mt-2 px-6 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary-hover transition"
+          className="mt-2 px-6 py-2 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary-hover transition-all duration-150"
         >
           Create Story
         </button>
@@ -104,7 +104,7 @@ export default function Feed() {
             <h2 className="text-sm font-semibold text-text-secondary uppercase tracking-wider">Saved</h2>
             <button
               onClick={() => navigate('/highlights')}
-              className="text-xs text-primary hover:text-primary-light transition"
+              className="text-xs text-primary hover:text-primary-light transition-all duration-150"
             >
               See all
             </button>
@@ -134,7 +134,7 @@ export default function Feed() {
       {/* FAB */}
       <button
         onClick={() => setShowCreate(true)}
-        className="fixed bottom-20 md:bottom-6 right-4 z-50 w-14 h-14 rounded-full bg-primary hover:bg-primary-hover text-white shadow-lg shadow-primary/30 flex items-center justify-center transition active:scale-95"
+        className="fixed bottom-24 right-5 z-50 w-12 h-12 rounded-full bg-primary hover:bg-primary-hover text-white shadow-lg shadow-primary/30 flex items-center justify-center transition-all duration-150 active:scale-[0.92]"
       >
         <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
           <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />

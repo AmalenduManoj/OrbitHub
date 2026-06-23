@@ -54,7 +54,7 @@ export default function HighlightDetail() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-20">
-        <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full" />
+        <div className="animate-spin h-8 w-8 border-[1.5px] border-primary border-t-transparent rounded-full" />
       </div>
     );
   }
@@ -65,7 +65,7 @@ export default function HighlightDetail() {
         <p className="text-text-muted">{error || 'Highlight not found'}</p>
         <button
           onClick={() => navigate('/highlights')}
-          className="px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary-hover transition"
+          className="px-4 py-2 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary-hover transition-all duration-150"
         >
           Back
         </button>
@@ -80,7 +80,7 @@ export default function HighlightDetail() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate('/highlights')}
-            className="text-text-secondary hover:text-text-primary transition"
+            className="text-text-secondary hover:text-text-primary transition-all duration-150"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
@@ -90,7 +90,7 @@ export default function HighlightDetail() {
         </div>
         <button
           onClick={handleDelete}
-          className="text-text-muted hover:text-red-400 transition text-sm"
+          className="text-text-muted hover:text-red-400 transition-all duration-150 text-sm"
         >
           Delete
         </button>
@@ -108,7 +108,7 @@ export default function HighlightDetail() {
             <div key={story.id} className="relative group">
               <button
                 onClick={() => navigate(`/stories/${story.id}`)}
-                className="aspect-[3/4] rounded-lg overflow-hidden bg-bg-card block w-full"
+                className="aspect-[3/4] rounded-xl overflow-hidden bg-bg-card block w-full"
               >
                 <img
                   src={story.media_url}
@@ -124,7 +124,7 @@ export default function HighlightDetail() {
               </button>
               <button
                 onClick={() => handleRemoveStory(story.id)}
-                className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-xs hover:bg-red-500/80"
+                className="absolute top-1 right-1 w-6 h-6 rounded-full bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-150 text-xs hover:bg-red-500/80"
               >
                 ✕
               </button>

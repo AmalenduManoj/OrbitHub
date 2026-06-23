@@ -45,7 +45,7 @@ export default function Highlights() {
         <h1 className="text-xl font-bold text-white">Saved</h1>
         <button
           onClick={() => setShowCreate(true)}
-          className="w-9 h-9 rounded-full bg-primary hover:bg-primary-hover text-white flex items-center justify-center transition"
+          className="w-9 h-9 rounded-full bg-primary hover:bg-primary-hover text-white flex items-center justify-center transition-all duration-150"
         >
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
             <path strokeLinecap="round" strokeLinejoin="round" d="M12 4v16m8-8H4" />
@@ -54,14 +54,14 @@ export default function Highlights() {
       </div>
 
       {error && (
-        <div className="bg-red-900/40 border border-red-500/50 text-red-200 text-sm rounded-lg px-4 py-2 mb-4">
+        <div className="bg-red-900/40 border border-red-500/50 text-red-200 text-sm rounded-xl px-4 py-2 mb-4">
           {error}
         </div>
       )}
 
       {loading ? (
         <div className="flex items-center justify-center py-20">
-          <div className="animate-spin h-8 w-8 border-2 border-primary border-t-transparent rounded-full" />
+          <div className="animate-spin h-8 w-8 border-[1.5px] border-primary border-t-transparent rounded-full" />
         </div>
       ) : highlights.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 gap-2">
@@ -72,7 +72,7 @@ export default function Highlights() {
           <p className="text-text-muted text-sm">Save stories to highlights to keep them forever</p>
           <button
             onClick={() => setShowCreate(true)}
-            className="mt-2 px-6 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary-hover transition"
+            className="mt-2 px-6 py-2 rounded-xl bg-primary text-white text-sm font-medium hover:bg-primary-hover transition-all duration-150"
           >
             Create Highlight
           </button>
@@ -84,7 +84,7 @@ export default function Highlights() {
               <HighlightCard highlight={hl} />
               <button
                 onClick={() => handleDelete(hl.id)}
-                className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition text-xs hover:bg-red-500/80"
+                className="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-black/40 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-150 text-xs hover:bg-red-500/80"
               >
                 ✕
               </button>
