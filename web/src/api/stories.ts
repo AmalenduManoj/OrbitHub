@@ -65,3 +65,8 @@ export async function createStory(data: CreateStoryRequest) {
   const res = await client.post<StoryDetailResponse>('/stories', data);
   return res.data;
 }
+
+export async function deleteStory(id: string) {
+  const res = await client.delete<MessageResponse>(`/stories/${id}`);
+  return res.data;
+}

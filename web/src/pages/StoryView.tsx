@@ -1,12 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getStory, viewStory, toggleLike, getComments, addComment, deleteComment } from '../api/stories';
+import { getStory, viewStory, toggleLike, getComments, addComment, deleteComment, getLikes, getViews, deleteStory } from '../api/stories';
 import { listHighlights, addStoryToHighlight } from '../api/highlights';
 import { useAuth } from '../context/AuthContext';
-import type { StoryDetailResponse, CommentResponse, HighlightResponse } from '../types';
+import type { StoryDetailResponse, CommentResponse, HighlightResponse, LikeUserResponse, ViewerResponse } from '../types';
 import LikeButton from '../components/LikeButton';
 import CommentList from '../components/CommentList';
 import CreateHighlightModal from '../components/CreateHighlightModal';
+import UserListSheet from '../components/UserListSheet';
 
 export default function StoryView() {
   const { id } = useParams<{ id: string }>();
@@ -25,6 +26,22 @@ export default function StoryView() {
   const [hlLoading, setHlLoading] = useState(false);
   const [showCreateHl, setShowCreateHl] = useState(false);
   const [hlMsg, setHlMsg] = useState('');
+
+  // Overflow menu
+  const [showMenu, setShowMenu] = useState(false);
+
+  // Likes sheet
+  const [showLikes, setShowLikes] = useState(false);
+  const [likes, setLikes] = useState<LikeUserResponse[]>([]);
+  const [likesLoading, setLikesLoading] = useState(false);
+
+  // Viewers sheet
+  const [showViewers, setShowViewers] = useState(false);
+  const [viewers, setViewers] = useState<ViewerResponse[]>([]);
+  const [viewersLoading, setViewersLoading] = useState(false);
+
+  // Delete
+  const [deleting, setDeleting] = useState(false);
 
   const isOwner = user && story && user.id === story.user_id;
 
@@ -107,6 +124,47 @@ export default function StoryView() {
     }
   };
 
+  // Delete story
+  const handleDelete = async () => {
+    if (!id || !window.confirm('Delete this story?')) return;
+    setDeleting(true);
+    try {
+      await deleteStory(id);
+      navigate('/');
+    } catch {
+      setDeleting(false);
+    }
+  };
+
+  // Load likes
+  const loadLikes = async () => {
+    if (!id) return;
+    if (likes.length > 0) { setShowLikes(true); return; }
+    setLikesLoading(true);
+    try {
+      const data = await getLikes(id);
+      setLikes(data);
+      setShowLikes(true);
+    } catch {} finally {
+      setLikesLoading(false);
+    }
+  };
+
+  // Load viewers
+  const loadViewers = async () => {
+    if (!id) return;
+    setShowMenu(false);
+    if (viewers.length > 0) { setShowViewers(true); return; }
+    setViewersLoading(true);
+    try {
+      const data = await getViews(id);
+      setViewers(data);
+      setShowViewers(true);
+    } catch {} finally {
+      setViewersLoading(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="fixed inset-0 bg-bg-base flex items-center justify-center z-50">
@@ -156,7 +214,16 @@ export default function StoryView() {
               <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
               <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
             </svg>
-            {story.view_count}
+            {isOwner ? (
+              <button
+                onClick={loadViewers}
+                className="hover:text-primary transition"
+              >
+                {story.view_count}
+              </button>
+            ) : (
+              story.view_count
+            )}
           </div>
 
           {/* Save to highlight (owner only) */}
@@ -172,7 +239,39 @@ export default function StoryView() {
             </button>
           )}
 
-          <LikeButton liked={liked} count={story.like_count} onToggle={handleLike} />
+          {/* Overflow menu (owner only) */}
+          {isOwner && (
+            <div className="relative">
+              <button
+                onClick={() => setShowMenu((prev) => !prev)}
+                className="text-text-secondary hover:text-text-primary transition"
+                title="More"
+              >
+                <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z" />
+                </svg>
+              </button>
+              {showMenu && (
+                <div className="absolute right-0 top-full mt-1 w-44 bg-bg-card border border-gray-700 rounded-lg shadow-lg overflow-hidden z-20">
+                  <button
+                    onClick={loadViewers}
+                    className="w-full text-left px-4 py-2.5 text-sm text-text-primary hover:bg-bg-hover transition"
+                  >
+                    Viewers ({story.view_count})
+                  </button>
+                  <button
+                    onClick={() => { setShowMenu(false); handleDelete(); }}
+                    disabled={deleting}
+                    className="w-full text-left px-4 py-2.5 text-sm text-red-400 hover:bg-bg-hover transition disabled:opacity-50"
+                  >
+                    {deleting ? 'Deleting…' : 'Delete story'}
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          <LikeButton liked={liked} count={story.like_count} onToggle={handleLike} onCountClick={loadLikes} />
         </div>
 
         {/* Bottom info overlay */}
@@ -202,6 +301,7 @@ export default function StoryView() {
         </div>
         <CommentList
           comments={comments}
+          currentUserId={user?.id}
           onAdd={handleAddComment}
           onDelete={handleDeleteComment}
         />
@@ -262,6 +362,22 @@ export default function StoryView() {
           </div>
         </div>
       )}
+
+      {/* Likes sheet */}
+      <UserListSheet
+        open={showLikes}
+        onClose={() => setShowLikes(false)}
+        title="Likes"
+        users={likes}
+      />
+
+      {/* Viewers sheet */}
+      <UserListSheet
+        open={showViewers}
+        onClose={() => setShowViewers(false)}
+        title="Viewers"
+        users={viewers}
+      />
 
       {/* Create highlight modal */}
       <CreateHighlightModal
