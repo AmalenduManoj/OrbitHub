@@ -51,8 +51,8 @@ export default function CreateHighlightModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50">
-      <div className="bg-elevated w-full sm:max-w-md sm:rounded-3xl rounded-t-3xl p-5">
+    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/50">
+      <div className="bg-elevated/80 backdrop-blur-2xl w-full sm:max-w-md sm:rounded-3xl rounded-t-3xl p-5 pb-20 sm:pb-5">
         <div className="flex items-center justify-between mb-4">
           <button onClick={onClose} className="text-text-secondary hover:text-text-primary text-sm transition-all duration-150">
             Cancel

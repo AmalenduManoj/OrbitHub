@@ -91,8 +91,8 @@ export default function CreateStoryModal({ open, onClose, onCreated }: CreateSto
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50">
-      <div className="bg-elevated w-full sm:max-w-md sm:rounded-3xl rounded-t-3xl max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/50">
+      <div className="bg-elevated/80 backdrop-blur-2xl w-full sm:max-w-md sm:rounded-3xl rounded-t-3xl max-h-[90vh] overflow-y-auto">
         {/* Header */}
         <div className="flex items-center justify-between px-5 pt-5 pb-2">
           <h2 className="text-base font-semibold text-white">New Story</h2>
@@ -107,7 +107,7 @@ export default function CreateStoryModal({ open, onClose, onCreated }: CreateSto
           </button>
         </div>
 
-        <form onSubmit={handleSubmit} className="px-5 pb-5 space-y-5">
+        <form onSubmit={handleSubmit} className="px-5 pb-20 sm:pb-5 space-y-5">
           {error && (
             <div className="flex items-center gap-2 bg-red-900/30 text-red-200 text-sm rounded-xl px-4 py-2.5">
               <svg className="w-4 h-4 shrink-0 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>

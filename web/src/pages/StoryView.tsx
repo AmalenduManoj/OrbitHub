@@ -310,7 +310,7 @@ export default function StoryView() {
       {/* Highlight picker overlay */}
       {showHlPicker && (
         <div className="fixed inset-0 z-[60] flex items-end sm:items-center justify-center bg-black/50">
-          <div className="bg-elevated w-full sm:max-w-sm sm:rounded-3xl rounded-t-3xl p-5">
+          <div className="bg-elevated/80 backdrop-blur-2xl w-full sm:max-w-sm sm:rounded-3xl rounded-t-3xl p-5 pb-20 sm:pb-5">
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-medium text-white text-sm">Save to Highlight</h3>
               <button
