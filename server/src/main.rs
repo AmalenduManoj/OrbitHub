@@ -1,4 +1,5 @@
 mod auth;
+mod chat;
 mod circles;
 mod config;
 mod db;
@@ -9,6 +10,7 @@ mod user;
 
 use actix_web::{web, App, HttpServer, middleware::Logger};
 use actix_cors::Cors;
+use chat::ws::ChatWsClients;
 use notifications::ws::WsClients;
 
 #[actix_web::main]
@@ -24,6 +26,7 @@ async fn main() -> std::io::Result<()> {
         .expect("Failed to create Redis client");
 
     let ws_clients: WsClients = notifications::ws::new_ws_clients();
+    let chat_ws_clients: ChatWsClients = chat::ws::new_chat_ws_clients();
 
     let bind_addr = format!("{}:{}", config.host, config.port);
 
@@ -39,11 +42,13 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(redis_client.clone()))
             .app_data(web::Data::new(config.clone()))
             .app_data(web::Data::new(ws_clients.clone()))
+            .app_data(web::Data::new(chat_ws_clients.clone()))
             .configure(auth::configure_routes)
             .configure(user::configure_routes)
             .configure(circles::configure_routes)
             .configure(stories::configure_routes)
             .configure(notifications::configure_routes)
+            .configure(chat::configure_routes)
     })
     .bind(&bind_addr)?
     .run()

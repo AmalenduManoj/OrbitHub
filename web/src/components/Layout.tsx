@@ -1,10 +1,12 @@
 import { Outlet, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useNotif } from '../context/NotificationContext';
+import { useChat } from '../context/ChatContext';
 
 export default function Layout() {
   const { user } = useAuth();
   const { unreadCount } = useNotif();
+  const { totalUnread: chatUnread } = useChat();
   const location = useLocation();
 
   const navItems = [
@@ -28,8 +30,19 @@ export default function Layout() {
           <Link to="/" className="text-lg font-bold text-primary tracking-tight">
             Orbit
           </Link>
-          <Link
-            to={user ? `/profile/${user.id}` : '/login'}
+          <div className="flex items-center gap-3">
+            <Link to="/messages" className="relative text-text-secondary hover:text-text-primary transition-all duration-150">
+              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={1.5}>
+                <path strokeLinecap="round" strokeLinejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+              </svg>
+              {chatUnread > 0 && (
+                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[8px] font-bold rounded-full min-w-[14px] h-[14px] flex items-center justify-center px-0.5 leading-none">
+                  {chatUnread > 99 ? '99+' : chatUnread}
+                </span>
+              )}
+            </Link>
+            <Link
+              to={user ? `/profile/${user.id}` : '/login'}
             className="w-7 h-7 rounded-full bg-primary/15 flex items-center justify-center overflow-hidden transition-all duration-150 hover:ring-1 hover:ring-primary/40"
           >
             {user?.avatar_url ? (
@@ -40,6 +53,7 @@ export default function Layout() {
               </span>
             )}
           </Link>
+          </div>
         </div>
       </header>
 

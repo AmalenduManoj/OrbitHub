@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import { NotificationProvider } from './context/NotificationContext';
+import { ChatProvider } from './context/ChatContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/Layout';
 import Login from './pages/Login';
@@ -15,6 +16,8 @@ import Highlights from './pages/Highlights';
 import HighlightDetail from './pages/HighlightDetail';
 import Notifications from './pages/Notifications';
 import Search from './pages/Search';
+import Messages from './pages/Messages';
+import MessageChat from './pages/MessageChat';
 
 function App() {
   return (
@@ -27,7 +30,9 @@ function App() {
             element={
               <ProtectedRoute>
                 <NotificationProvider>
-                  <Layout />
+                  <ChatProvider>
+                    <Layout />
+                  </ChatProvider>
                 </NotificationProvider>
               </ProtectedRoute>
             }
@@ -42,6 +47,8 @@ function App() {
             <Route path="/highlights/:id" element={<HighlightDetail />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/search" element={<Search />} />
+            <Route path="/messages" element={<Messages />} />
+            <Route path="/messages/:id" element={<MessageChat />} />
           </Route>
         </Routes>
       </AuthProvider>

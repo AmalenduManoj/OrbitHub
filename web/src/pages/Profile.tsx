@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getProfile, follow, unfollow, getFollowers, getFollowing } from '../api/users';
+import { getOrCreateConversation } from '../api/chat';
 import { useAuth } from '../context/AuthContext';
 import type { UserResponse, UserSearchResult } from '../types';
 import UserListSheet from '../components/UserListSheet';
@@ -194,16 +195,31 @@ export default function Profile() {
 
         {/* Follow / Edit */}
         {!isOwnProfile ? (
-          <button
-            onClick={handleFollow}
-            className={`mt-4 px-6 py-2 rounded-xl text-sm font-medium transition-all duration-150 ${
-              isFollowing
-                ? 'bg-bg-hover text-text-secondary border border-gray-700 hover:border-red-500 hover:text-red-400'
-                : 'bg-primary hover:bg-primary-hover text-white'
-            }`}
-          >
-            {isFollowing ? 'Following' : 'Follow'}
-          </button>
+          <div className="mt-4 flex items-center justify-center gap-2">
+            <button
+              onClick={handleFollow}
+              className={`px-6 py-2 rounded-xl text-sm font-medium transition-all duration-150 ${
+                isFollowing
+                  ? 'bg-bg-hover text-text-secondary border border-gray-700 hover:border-red-500 hover:text-red-400'
+                  : 'bg-primary hover:bg-primary-hover text-white'
+              }`}
+            >
+              {isFollowing ? 'Following' : 'Follow'}
+            </button>
+            {isFollowing && (
+              <button
+                onClick={async () => {
+                  try {
+                    const conv = await getOrCreateConversation({ user_id: profile.id });
+                    navigate(`/messages/${conv.id}`);
+                  } catch {}
+                }}
+                className="px-6 py-2 rounded-xl bg-bg-hover text-text-secondary border border-gray-700 text-sm font-medium hover:border-primary hover:text-primary transition-all duration-150"
+              >
+                Message
+              </button>
+            )}
+          </div>
         ) : (
           <button
             onClick={() => navigate('/settings')}

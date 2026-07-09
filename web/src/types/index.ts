@@ -219,6 +219,35 @@ export interface UserSearchResult {
   avatar_url: string | null;
 }
 
+// ── Chat ──
+export interface ConversationResponse {
+  id: string;
+  other_user_id: string;
+  other_username: string;
+  other_avatar_url: string | null;
+  last_message: string | null;
+  last_message_at: string | null;
+  last_message_sender_id: string | null;
+  unread_count: number;
+}
+
+export interface ChatMessageResponse {
+  id: string;
+  conversation_id: string;
+  sender_id: string;
+  content: string;
+  seen_at: string | null;
+  created_at: string;
+}
+
+export interface CreateConversationRequest {
+  user_id: string;
+}
+
+export interface SendMessageRequest {
+  content: string;
+}
+
 // ── Generic ──
 export interface MessageResponse {
   message: string;
