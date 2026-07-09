@@ -39,6 +39,7 @@ pub struct AuthUserResponse {
     pub bio: Option<String>,
     pub avatar_url: Option<String>,
     pub gender: Option<String>,
+    pub link_url: Option<String>,
     pub created_at: DateTime<Utc>,
 }
 

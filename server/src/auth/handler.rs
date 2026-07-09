@@ -26,7 +26,7 @@ pub async fn register(
     let user = sqlx::query_as::<_, AuthUserResponse>(
         "INSERT INTO users (username, email, password_hash)
          VALUES ($1, $2, $3)
-         RETURNING id, username, email, NULL as bio, NULL as avatar_url, NULL as gender, created_at",
+         RETURNING id, username, email, NULL as bio, NULL as avatar_url, NULL as gender, NULL as link_url, created_at",
     )
     .bind(&body.username)
     .bind(&body.email)
@@ -35,7 +35,7 @@ pub async fn register(
     .await?;
 
     sqlx::query(
-        "INSERT INTO profiles (user_id, bio, avatar_url, gender) VALUES ($1, $2, $3, $4)",
+        "INSERT INTO profiles (user_id, bio, avatar_url, gender, link_url) VALUES ($1, $2, $3, $4, NULL)",
     )
     .bind(user.id)
     .bind(&body.bio)
@@ -65,7 +65,7 @@ pub async fn login(
     body: web::Json<LoginRequest>,
 ) -> Result<HttpResponse, AppError> {
     let user = sqlx::query_as::<_, UserWithPassword>(
-        "SELECT u.id, u.username, u.email, u.password_hash, p.bio, p.avatar_url, p.gender, u.created_at
+        "SELECT u.id, u.username, u.email, u.password_hash, p.bio, p.avatar_url, p.gender, p.link_url, u.created_at
          FROM users u
          LEFT JOIN profiles p ON p.user_id = u.id
          WHERE u.email = $1 OR u.username = $1",
@@ -95,6 +95,7 @@ pub async fn login(
             bio: user.bio,
             avatar_url: user.avatar_url,
             gender: user.gender,
+            link_url: user.link_url,
             created_at: user.created_at,
         },
     }))
@@ -175,5 +176,6 @@ struct UserWithPassword {
     bio: Option<String>,
     avatar_url: Option<String>,
     gender: Option<String>,
+    link_url: Option<String>,
     created_at: chrono::DateTime<chrono::Utc>,
 }

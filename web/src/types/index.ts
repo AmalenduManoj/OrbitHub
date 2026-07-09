@@ -24,6 +24,7 @@ export interface AuthUserResponse {
   bio: string | null;
   avatar_url: string | null;
   gender: string | null;
+  link_url: string | null;
   created_at: string;
 }
 
@@ -45,6 +46,7 @@ export interface UserResponse {
   bio: string | null;
   avatar_url: string | null;
   gender: string | null;
+  link_url: string | null;
   created_at: string;
   follower_count: number;
   following_count: number;
@@ -54,6 +56,7 @@ export interface ProfileUpdateRequest {
   bio?: string;
   avatar_url?: string;
   gender?: string;
+  link_url?: string;
 }
 
 // ── Circles ──

@@ -5,13 +5,14 @@ import { uploadFile } from '../lib/cloudinary';
 import { useAuth } from '../context/AuthContext';
 
 export default function Settings() {
-  const { user, logout } = useAuth();
+  const { user, logout, updateUser } = useAuth();
   const navigate = useNavigate();
   const fileRef = useRef<HTMLInputElement>(null);
 
   const [bio, setBio] = useState(user?.bio || '');
   const [avatarUrl, setAvatarUrl] = useState(user?.avatar_url || '');
   const [gender, setGender] = useState(user?.gender || '');
+  const [linkUrl, setLinkUrl] = useState(user?.link_url || '');
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -42,10 +43,18 @@ export default function Settings() {
         setUploading(false);
       }
 
-      await updateProfile({
+      const updated = await updateProfile({
         bio: bio || undefined,
         avatar_url: finalAvatar,
         gender: gender || undefined,
+        link_url: linkUrl || undefined,
+      });
+
+      updateUser({
+        bio: updated.bio,
+        avatar_url: updated.avatar_url,
+        gender: updated.gender,
+        link_url: updated.link_url,
       });
 
       setAvatarUrl(finalAvatar || '');
@@ -151,6 +160,21 @@ export default function Settings() {
             <option value="female">Female</option>
             <option value="other">Other</option>
           </select>
+        </div>
+
+        {/* Website / Link */}
+        <div>
+          <label htmlFor="linkUrl" className="block text-sm font-medium text-text-secondary mb-1">
+            Website <span className="text-text-muted">(optional)</span>
+          </label>
+          <input
+            id="linkUrl"
+            type="url"
+            value={linkUrl}
+            onChange={(e) => setLinkUrl(e.target.value)}
+            className="w-full px-4 py-3 rounded-xl bg-bg-card border border-gray-700 text-text-primary placeholder-text-muted focus:outline-none focus:ring-1 focus:ring-primary"
+            placeholder="https://example.com"
+          />
         </div>
 
         {/* Upload progress */}

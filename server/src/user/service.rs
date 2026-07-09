@@ -12,6 +12,7 @@ pub async fn get_user_profile(pool: &PgPool, user_id: Uuid) -> Result<UserRespon
             p.bio,
             p.avatar_url,
             p.gender,
+            p.link_url,
             u.created_at,
             COALESCE(f1.cnt, 0) AS follower_count,
             COALESCE(f2.cnt, 0) AS following_count
@@ -38,12 +39,14 @@ pub async fn update_profile(
         "UPDATE profiles SET
             bio = COALESCE($1, bio),
             avatar_url = COALESCE($2, avatar_url),
-            gender = COALESCE($3, gender)
-         WHERE user_id = $4",
+            gender = COALESCE($3, gender),
+            link_url = $4
+         WHERE user_id = $5",
     )
     .bind(&body.bio)
     .bind(&body.avatar_url)
     .bind(&body.gender)
+    .bind(&body.link_url)
     .bind(user_id)
     .execute(pool)
     .await?;
