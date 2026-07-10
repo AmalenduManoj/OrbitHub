@@ -10,7 +10,7 @@ export default function MessageChat() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user } = useAuth();
-  const { conversations } = useChat();
+  const { conversations, refreshConversations } = useChat();
 
   const [messages, setMessages] = useState<ChatMessageResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,7 +49,7 @@ export default function MessageChat() {
     setHasMore(false);
     if (id) {
       fetchMessages();
-      chatApi.markRead(id).catch(() => {});
+      chatApi.markRead(id).then(() => refreshConversations()).catch(() => {});
     }
   }, [id, fetchMessages]);
 
@@ -71,10 +71,10 @@ export default function MessageChat() {
       return copy;
     });
     if (msg.sender_id !== user?.id) {
-      chatApi.markRead(id!).catch(() => {});
+      chatApi.markRead(id!).then(() => refreshConversations()).catch(() => {});
     }
     requestAnimationFrame(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }));
-  }, [id, user?.id]);
+  }, [id, user?.id, refreshConversations]);
 
   const onMessagesRead = useCallback((conversationId: string, seenAt: string) => {
     if (conversationId !== id) return;

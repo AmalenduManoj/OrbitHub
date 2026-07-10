@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getProfile, follow, unfollow, getFollowers, getFollowing } from '../api/users';
-import { getOrCreateConversation } from '../api/chat';
 import { useAuth } from '../context/AuthContext';
+import { useChat } from '../context/ChatContext';
 import type { UserResponse, UserSearchResult } from '../types';
 import UserListSheet from '../components/UserListSheet';
 
@@ -10,6 +10,7 @@ export default function Profile() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const { user: me } = useAuth();
+  const { getOrCreateConversation } = useChat();
 
   const [profile, setProfile] = useState<UserResponse | null>(null);
   const [loading, setLoading] = useState(true);
@@ -210,7 +211,7 @@ export default function Profile() {
               <button
                 onClick={async () => {
                   try {
-                    const conv = await getOrCreateConversation({ user_id: profile.id });
+                    const conv = await getOrCreateConversation(profile.id);
                     navigate(`/messages/${conv.id}`);
                   } catch {}
                 }}
