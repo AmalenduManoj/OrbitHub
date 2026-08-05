@@ -87,10 +87,12 @@ jobs:
           TASK: ${{ steps.task.outputs.task }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
+          set +e
           mini -t "$TASK" -y --exit-immediately \
             -m openrouter/openai/gpt-oss-20b:free \
             -l 0 \
-            -o /tmp/balbasaur.traj.json
+            -o /tmp/balbasaur.traj.json 2>&1 | tee /tmp/balbasaur.log
+          exit ${PIPESTATUS[0]}
 
       - name: Commit changes and open PR
         id: commit
@@ -127,8 +129,13 @@ jobs:
             gh issue comment ${{ github.event.issue.number }} \
               --body "❌ balbasaur couldn't start — the \`OPENROUTER_API_KEY\` secret is missing. Add it under Settings → Secrets and variables → Actions, then re-label this issue."
           elif [ "${{ steps.run.outcome }}" = "failure" ]; then
-            gh issue comment ${{ github.event.issue.number }} \
-              --body "❌ balbasaur crashed while working on issue #${{ github.event.issue.number }} (bad model, missing key, or rate limit). Check the workflow run logs for details."
+            {
+              echo "❌ balbasaur crashed while working on issue #${{ github.event.issue.number }}:"
+              echo '```'
+              tail -n 20 /tmp/balbasaur.log 2>/dev/null || echo "(no agent output captured)"
+              echo '```'
+            } > /tmp/comment.md
+            gh issue comment ${{ github.event.issue.number }} --body-file /tmp/comment.md
           else
             gh issue comment ${{ github.event.issue.number }} \
               --body "🤔 balbasaur ran on issue #${{ github.event.issue.number }} but could not produce a fix. Check the workflow run logs for details."
