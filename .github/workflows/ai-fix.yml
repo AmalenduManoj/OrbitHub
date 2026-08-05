@@ -47,16 +47,27 @@ jobs:
             echo "skip=false" >> "$GITHUB_OUTPUT"
           fi
 
-      - name: Install mini-swe-agent
+      - name: Verify API key secret
+        id: verify
         if: steps.guard.outputs.skip != 'true'
+        env:
+          OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
+        run: |
+          if [ -z "$OPENROUTER_API_KEY" ]; then
+            echo "::error::OPENROUTER_API_KEY secret is not set. Add it under Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+
+      - name: Install mini-swe-agent
+        if: steps.guard.outputs.skip != 'true' && steps.verify.outcome != 'failure'
         run: |
           pip install mini-swe-agent
           mini-extra config set MSWEA_CONFIGURED 'true'
           mini-extra config set OPENROUTER_API_KEY '${{ secrets.OPENROUTER_API_KEY }}'
 
       - name: Build task text
+        if: steps.guard.outputs.skip != 'true' && steps.verify.outcome != 'failure'
         id: task
-        if: steps.guard.outputs.skip != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -70,14 +81,14 @@ jobs:
 
       - name: Run balbasaur on issue
         id: run
-        if: steps.guard.outputs.skip != 'true'
+        if: steps.guard.outputs.skip != 'true' && steps.verify.outcome != 'failure'
         continue-on-error: true
         env:
           TASK: ${{ steps.task.outputs.task }}
           OPENROUTER_API_KEY: ${{ secrets.OPENROUTER_API_KEY }}
         run: |
           mini -t "$TASK" -y --exit-immediately \
-            -m openrouter/deepseek/deepseek-chat-v3-0324:free \
+            -m openrouter/openai/gpt-oss-20b:free \
             -l 0 \
             -o /tmp/balbasaur.traj.json
 
@@ -112,7 +123,13 @@ jobs:
           if [ "${{ steps.commit.outcome }}" = "success" ]; then
             gh issue comment ${{ github.event.issue.number }} \
               --body "✅ balbasaur fixed issue #${{ github.event.issue.number }} — PR: ${{ steps.commit.outputs.pr_url }}"
+          elif [ "${{ steps.verify.outcome }}" = "failure" ]; then
+            gh issue comment ${{ github.event.issue.number }} \
+              --body "❌ balbasaur couldn't start — the \`OPENROUTER_API_KEY\` secret is missing. Add it under Settings → Secrets and variables → Actions, then re-label this issue."
+          elif [ "${{ steps.run.outcome }}" = "failure" ]; then
+            gh issue comment ${{ github.event.issue.number }} \
+              --body "❌ balbasaur crashed while working on issue #${{ github.event.issue.number }} (bad model, missing key, or rate limit). Check the workflow run logs for details."
           else
             gh issue comment ${{ github.event.issue.number }} \
-              --body "❌ balbasaur could not produce a fix for issue #${{ github.event.issue.number }}. Check the workflow run logs for details."
+              --body "🤔 balbasaur ran on issue #${{ github.event.issue.number }} but could not produce a fix. Check the workflow run logs for details."
           fi
